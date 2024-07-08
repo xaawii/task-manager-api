@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: gateway-service
+
+
+  ### GATEWAY ROUTES ###
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**,/user-service/**
+          filters:
+            - AuthFilter
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**,/auth-service/**
+
+
+
+### PORT ###
+server:
+  port: 8080
+
+
+### EUREKA ###
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+
+### SWAGGER ROUTES ###
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /user-service/v3/api-docs
+        name: User Service
+      - url: /auth-service/v3/api-docs
+        name: Auth Service
+
+    disable-swagger-default-url: true
+
+
+
+
