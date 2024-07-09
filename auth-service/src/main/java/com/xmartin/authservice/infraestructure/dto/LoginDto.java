@@ -1,4 +1,4 @@
-package com.xmartin.authservice.controller.dto;
+package com.xmartin.authservice.infraestructure.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

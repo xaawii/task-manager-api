@@ -1,4 +1,4 @@
-package com.xmartin.authservice.controller;
+package com.xmartin.authservice.infraestructure.exceptions;
 
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;

@@ -1,6 +1,6 @@
-package com.xmartin.authservice.client;
+package com.xmartin.authservice.infraestructure.client;
 
-import com.xmartin.authservice.model.UserModel;
+import com.xmartin.authservice.domain.model.UserModel;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,7 @@
-package com.xmartin.authservice.security;
+package com.xmartin.authservice.infraestructure.security;
 
-import com.xmartin.authservice.controller.dto.RequestDto;
-import com.xmartin.authservice.model.UserModel;
+import com.xmartin.authservice.infraestructure.dto.RequestDto;
+import com.xmartin.authservice.domain.model.UserModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

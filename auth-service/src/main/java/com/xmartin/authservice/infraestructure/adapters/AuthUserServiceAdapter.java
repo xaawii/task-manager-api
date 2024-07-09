@@ -1,13 +1,13 @@
-package com.xmartin.authservice.service.impl;
+package com.xmartin.authservice.infraestructure.adapters;
 
-import com.xmartin.authservice.client.UserClient;
-import com.xmartin.authservice.controller.dto.LoginDto;
-import com.xmartin.authservice.controller.dto.RegisterDto;
-import com.xmartin.authservice.controller.dto.RequestDto;
-import com.xmartin.authservice.controller.dto.TokenDto;
-import com.xmartin.authservice.model.UserModel;
-import com.xmartin.authservice.security.JwtProvider;
-import com.xmartin.authservice.service.AuthUserService;
+import com.xmartin.authservice.domain.ports.out.AuthUserServicePort;
+import com.xmartin.authservice.infraestructure.client.UserClient;
+import com.xmartin.authservice.infraestructure.dto.LoginDto;
+import com.xmartin.authservice.infraestructure.dto.RegisterDto;
+import com.xmartin.authservice.infraestructure.dto.RequestDto;
+import com.xmartin.authservice.infraestructure.dto.TokenDto;
+import com.xmartin.authservice.domain.model.UserModel;
+import com.xmartin.authservice.infraestructure.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthUserServiceImpl implements AuthUserService {
+public class AuthUserServiceAdapter implements AuthUserServicePort {
 
     private final UserClient userClient;
     private final PasswordEncoder passwordEncoder;

@@ -1,11 +1,11 @@
-package com.xmartin.authservice.controller;
+package com.xmartin.authservice.infraestructure.controller;
 
-import com.xmartin.authservice.controller.dto.LoginDto;
-import com.xmartin.authservice.controller.dto.RegisterDto;
-import com.xmartin.authservice.controller.dto.RequestDto;
-import com.xmartin.authservice.controller.dto.TokenDto;
-import com.xmartin.authservice.model.UserModel;
-import com.xmartin.authservice.service.AuthUserService;
+import com.xmartin.authservice.application.service.AuthService;
+import com.xmartin.authservice.domain.model.UserModel;
+import com.xmartin.authservice.infraestructure.dto.LoginDto;
+import com.xmartin.authservice.infraestructure.dto.RegisterDto;
+import com.xmartin.authservice.infraestructure.dto.RequestDto;
+import com.xmartin.authservice.infraestructure.dto.TokenDto;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,14 +21,14 @@ import java.net.ConnectException;
 @RequiredArgsConstructor
 public class AuthUserController {
 
-    private final AuthUserService authUserService;
+    private final AuthService authService;
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackLogin")
     @Operation(summary = "Log in", description = "Log in a user in the application")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
 
-        TokenDto tokenDto = authUserService.login(loginDto);
+        TokenDto tokenDto = authService.login(loginDto);
         if (tokenDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
@@ -40,7 +40,7 @@ public class AuthUserController {
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidate")
     @PostMapping("/validate")
     public ResponseEntity<?> validate(@RequestParam String token, @RequestBody RequestDto requestDto) {
-        TokenDto tokenDto = authUserService.validate(token, requestDto);
+        TokenDto tokenDto = authService.validate(token, requestDto);
         if (tokenDto == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
@@ -52,7 +52,7 @@ public class AuthUserController {
     @Operation(summary = "Sign up", description = "Sign up a user in the application")
     @PostMapping("/create")
     public ResponseEntity<?> save(@RequestBody RegisterDto registerDto) {
-        UserModel userModel = authUserService.save(registerDto);
+        UserModel userModel = authService.register(registerDto);
         if (userModel == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {

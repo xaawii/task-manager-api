@@ -1,4 +1,4 @@
-package com.xmartin.authservice.model;
+package com.xmartin.authservice.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

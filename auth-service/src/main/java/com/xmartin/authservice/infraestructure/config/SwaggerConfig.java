@@ -1,4 +1,4 @@
-package com.xmartin.authservice.security;
+package com.xmartin.authservice.infraestructure.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

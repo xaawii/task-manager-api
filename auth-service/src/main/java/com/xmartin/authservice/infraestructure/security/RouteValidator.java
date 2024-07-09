@@ -1,6 +1,6 @@
-package com.xmartin.authservice.security;
+package com.xmartin.authservice.infraestructure.security;
 
-import com.xmartin.authservice.controller.dto.RequestDto;
+import com.xmartin.authservice.infraestructure.dto.RequestDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

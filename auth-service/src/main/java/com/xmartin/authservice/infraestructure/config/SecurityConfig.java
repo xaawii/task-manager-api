@@ -1,4 +1,4 @@
-package com.xmartin.authservice.security;
+package com.xmartin.authservice.infraestructure.config;
 
 
 import org.springframework.context.annotation.Bean;
