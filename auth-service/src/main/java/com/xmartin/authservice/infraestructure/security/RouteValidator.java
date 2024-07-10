@@ -1,5 +1,6 @@
 package com.xmartin.authservice.infraestructure.security;
 
+import com.xmartin.authservice.domain.model.RequestModel;
 import com.xmartin.authservice.infraestructure.dto.RequestDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +18,10 @@ public class RouteValidator {
 
     private List<RequestDto> paths;
 
-    public boolean isAdminPath(RequestDto requestDto) {
+    public boolean isAdminPath(RequestModel requestModel) {
         return paths.stream()
                 .anyMatch(p ->
-                        Pattern.matches(p.getUri(), requestDto.getUri())
-                                && p.getMethod().equals(requestDto.getMethod()));
+                        Pattern.matches(p.getUri(), requestModel.getUri())
+                                && p.getMethod().equals(requestModel.getMethod()));
     }
 }

@@ -1,8 +1,8 @@
 package com.xmartin.authservice.domain.ports.in;
 
-import com.xmartin.authservice.infraestructure.dto.RequestDto;
-import com.xmartin.authservice.infraestructure.dto.TokenDto;
+import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
+import com.xmartin.authservice.domain.model.RequestModel;
 
 public interface ValidateUseCase {
-    TokenDto validate(String token, RequestDto requestDto);
+    String validate(String token, RequestModel requestModel) throws InvalidTokenException;
 }

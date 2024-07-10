@@ -1,5 +1,6 @@
 package com.xmartin.authservice.infraestructure.security;
 
+import com.xmartin.authservice.domain.model.RequestModel;
 import com.xmartin.authservice.infraestructure.dto.RequestDto;
 import com.xmartin.authservice.domain.model.UserModel;
 import io.jsonwebtoken.Claims;
@@ -42,14 +43,14 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean validate(String token, RequestDto requestDto) {
+    public boolean validate(String token, RequestModel requestModel) {
         try {
             Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
         } catch (Exception e) {
             return false;
         }
 
-        if (isTokenExpired(token) || !isAdmin(token) && routeValidator.isAdminPath(requestDto)) {
+        if (isTokenExpired(token) || !isAdmin(token) && routeValidator.isAdminPath(requestModel)) {
             return false;
         } else {
             return true;

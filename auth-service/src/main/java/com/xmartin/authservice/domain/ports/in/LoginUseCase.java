@@ -1,9 +1,10 @@
 package com.xmartin.authservice.domain.ports.in;
 
-import com.xmartin.authservice.infraestructure.dto.LoginDto;
-import com.xmartin.authservice.infraestructure.dto.TokenDto;
+import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
+import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
+import com.xmartin.authservice.domain.model.LoginModel;
 
 public interface LoginUseCase {
 
-    TokenDto login(LoginDto loginDto);
+    String login(LoginModel loginModel) throws UserNotFoundException, WrongPasswordException;
 }

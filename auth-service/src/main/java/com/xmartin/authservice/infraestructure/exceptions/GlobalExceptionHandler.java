@@ -1,5 +1,9 @@
 package com.xmartin.authservice.infraestructure.exceptions;
 
+import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
+import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
+import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
+import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +17,26 @@ import java.net.SocketTimeoutException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    ResponseEntity<String> handleWrongPasswordException(WrongPasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    ResponseEntity<String> handleEmailAlreadyInUseException(EmailAlreadyInUseException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    ResponseEntity<String> handleInvalidTokenException(InvalidTokenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
 
     @ExceptionHandler(FeignException.NotFound.class)
     ResponseEntity<String> handleFeignNotFoundException(FeignException.NotFound e) {

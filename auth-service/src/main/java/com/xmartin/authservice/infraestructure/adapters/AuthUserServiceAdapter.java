@@ -1,12 +1,15 @@
 package com.xmartin.authservice.infraestructure.adapters;
 
+import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
+import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
+import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
+import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
+import com.xmartin.authservice.domain.model.LoginModel;
+import com.xmartin.authservice.domain.model.RegisterModel;
+import com.xmartin.authservice.domain.model.RequestModel;
+import com.xmartin.authservice.domain.model.UserModel;
 import com.xmartin.authservice.domain.ports.out.AuthUserServicePort;
 import com.xmartin.authservice.infraestructure.client.UserClient;
-import com.xmartin.authservice.infraestructure.dto.LoginDto;
-import com.xmartin.authservice.infraestructure.dto.RegisterDto;
-import com.xmartin.authservice.infraestructure.dto.RequestDto;
-import com.xmartin.authservice.infraestructure.dto.TokenDto;
-import com.xmartin.authservice.domain.model.UserModel;
 import com.xmartin.authservice.infraestructure.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,15 +26,15 @@ public class AuthUserServiceAdapter implements AuthUserServicePort {
     private final JwtProvider jwtProvider;
 
     @Override
-    public UserModel save(RegisterDto registerDto) {
-        Optional<UserModel> user = userClient.getUserByEmail(registerDto.getEmail());
-        if (user.isPresent()) return null;
+    public UserModel save(RegisterModel registerModel) throws EmailAlreadyInUseException {
+        boolean userExist = userClient.getUserExistsByEmail(registerModel.getEmail());
+        if (userExist) throw new EmailAlreadyInUseException("Email " + registerModel.getEmail() + " already in use.");
 
-        String password = passwordEncoder.encode(registerDto.getPassword());
+        String password = passwordEncoder.encode(registerModel.getPassword());
 
         UserModel userModel = UserModel.builder()
-                .name(registerDto.getName())
-                .email(registerDto.getEmail())
+                .name(registerModel.getName())
+                .email(registerModel.getEmail())
                 .password(password)
                 .role("ROLE_USER")
                 .build();
@@ -40,24 +43,24 @@ public class AuthUserServiceAdapter implements AuthUserServicePort {
     }
 
     @Override
-    public TokenDto login(LoginDto loginDto) {
-        Optional<UserModel> user = userClient.getUserByEmail(loginDto.getEmail());
-        if (!user.isPresent()) return null;
-        if (passwordEncoder.matches(loginDto.getPassword(), user.get().getPassword())) {
-            return new TokenDto(jwtProvider.createToken(user.get()));
+    public String login(LoginModel loginModel) throws WrongPasswordException, UserNotFoundException {
+        Optional<UserModel> user = userClient.getUserByEmail(loginModel.getEmail());
+        if (user.isEmpty()) throw new UserNotFoundException();
+        if (passwordEncoder.matches(loginModel.getPassword(), user.get().getPassword())) {
+            return jwtProvider.createToken(user.get());
         } else {
-            return null;
+            throw new WrongPasswordException();
         }
     }
 
     @Override
-    public TokenDto validate(String token, RequestDto requestDto) {
-        if (!jwtProvider.validate(token, requestDto)) return null;
+    public String validate(String token, RequestModel requestModel) throws InvalidTokenException {
+        if (!jwtProvider.validate(token, requestModel)) throw new InvalidTokenException();
 
         String email = jwtProvider.getEmailFromToken(token);
-        if (userClient.getUserByEmail(email).isEmpty()) return null;
+        if (userClient.getUserByEmail(email).isEmpty()) throw new InvalidTokenException();
 
-        return new TokenDto(token);
+        return token;
     }
 
 

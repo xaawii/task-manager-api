@@ -1,13 +1,16 @@
 package com.xmartin.authservice.application.service;
 
+import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
+import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
+import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
+import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
+import com.xmartin.authservice.domain.model.LoginModel;
+import com.xmartin.authservice.domain.model.RegisterModel;
+import com.xmartin.authservice.domain.model.RequestModel;
 import com.xmartin.authservice.domain.model.UserModel;
 import com.xmartin.authservice.domain.ports.in.LoginUseCase;
 import com.xmartin.authservice.domain.ports.in.RegisterUseCase;
 import com.xmartin.authservice.domain.ports.in.ValidateUseCase;
-import com.xmartin.authservice.infraestructure.dto.LoginDto;
-import com.xmartin.authservice.infraestructure.dto.RegisterDto;
-import com.xmartin.authservice.infraestructure.dto.RequestDto;
-import com.xmartin.authservice.infraestructure.dto.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +23,17 @@ public class AuthService implements LoginUseCase, RegisterUseCase, ValidateUseCa
     private final ValidateUseCase validateUseCase;
 
     @Override
-    public TokenDto login(LoginDto loginDto) {
-        return loginUseCase.login(loginDto);
+    public String login(LoginModel loginModel) throws UserNotFoundException, WrongPasswordException {
+        return loginUseCase.login(loginModel);
     }
 
     @Override
-    public UserModel register(RegisterDto registerDto) {
-        return registerUseCase.register(registerDto);
+    public UserModel register(RegisterModel registerModel) throws EmailAlreadyInUseException {
+        return registerUseCase.register(registerModel);
     }
 
     @Override
-    public TokenDto validate(String token, RequestDto requestDto) {
-        return validateUseCase.validate(token, requestDto);
+    public String validate(String token, RequestModel requestModel) throws InvalidTokenException {
+        return validateUseCase.validate(token, requestModel);
     }
 }
