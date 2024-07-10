@@ -37,15 +37,16 @@ public class AuthUserController {
     @Operation(summary = "Log in", description = "Log in a user in the application")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws UserNotFoundException, WrongPasswordException {
+
         String newToken = authService.login(loginMapper.loginDtoToModel(loginDto));
         return ResponseEntity.ok(TokenDto.builder().token(newToken).build());
-
 
     }
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidate")
     @PostMapping("/validate")
     public ResponseEntity<?> validate(@RequestParam String token, @RequestBody RequestDto requestDto) throws InvalidTokenException {
+
         String newToken = authService.validate(token, requestMapper.requestDtoToModel(requestDto));
         return ResponseEntity.ok(TokenDto.builder().token(newToken).build());
 

@@ -1,12 +1,12 @@
 package com.xmartin.userservice.infraestructure.adapters;
 
 
-import com.xmartin.userservice.domain.model.UserModel;
-import com.xmartin.userservice.infraestructure.entity.UserEntity;
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
-import com.xmartin.userservice.infraestructure.repository.JpaUserRepository;
+import com.xmartin.userservice.domain.model.UserModel;
 import com.xmartin.userservice.domain.port.out.UserServicePort;
 import com.xmartin.userservice.infraestructure.converters.UserConverter;
+import com.xmartin.userservice.infraestructure.entity.UserEntity;
+import com.xmartin.userservice.infraestructure.repository.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class UserServiceAdapter implements UserServicePort {
     @Override
     public UserModel getUserByEmail(String email) throws UserNotFoundException {
         return userConverter.toModel(jpaUserRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found")));
+                .orElseThrow(() -> new UserNotFoundException(email)));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class UserServiceAdapter implements UserServicePort {
     @Override
     public void deleteUser(String email) throws UserNotFoundException {
         UserEntity userEntity = jpaUserRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(email));
         jpaUserRepository.delete(userEntity);
     }
 

@@ -1,6 +1,5 @@
 package com.xmartin.authservice.infraestructure.adapters;
 
-import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
 import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
 import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
@@ -26,9 +25,7 @@ public class AuthUserServiceAdapter implements AuthUserServicePort {
     private final JwtProvider jwtProvider;
 
     @Override
-    public UserModel save(RegisterModel registerModel) throws EmailAlreadyInUseException {
-        boolean userExist = userClient.getUserExistsByEmail(registerModel.getEmail());
-        if (userExist) throw new EmailAlreadyInUseException("Email " + registerModel.getEmail() + " already in use.");
+    public UserModel save(RegisterModel registerModel) {
 
         String password = passwordEncoder.encode(registerModel.getPassword());
 
@@ -58,7 +55,7 @@ public class AuthUserServiceAdapter implements AuthUserServicePort {
         if (!jwtProvider.validate(token, requestModel)) throw new InvalidTokenException();
 
         String email = jwtProvider.getEmailFromToken(token);
-        if (userClient.getUserByEmail(email).isEmpty()) throw new InvalidTokenException();
+        if (!userClient.getUserExistsByEmail(email)) throw new InvalidTokenException();
 
         return token;
     }

@@ -43,6 +43,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.contentUTF8());
     }
 
+    @ExceptionHandler(FeignException.BadRequest.class)
+    ResponseEntity<String> handleFeignBadRequestException(FeignException.BadRequest e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.contentUTF8());
+    }
+
     @ExceptionHandler(FeignException.Unauthorized.class)
     ResponseEntity<String> handleFeignUnauthorizedException(FeignException.Unauthorized e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.contentUTF8());

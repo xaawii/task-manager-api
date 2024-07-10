@@ -1,5 +1,6 @@
 package com.xmartin.userservice.application.services;
 
+import com.xmartin.userservice.domain.exceptions.EmailAlreadyInUseException;
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.userservice.domain.model.UserModel;
 import com.xmartin.userservice.domain.port.in.DeleteUserUseCase;
@@ -34,7 +35,7 @@ public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUse
     }
 
     @Override
-    public UserModel saveUser(UserModel user) {
+    public UserModel saveUser(UserModel user) throws EmailAlreadyInUseException {
         return saveUserUseCase.saveUser(user);
     }
 }
