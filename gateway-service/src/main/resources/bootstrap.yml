@@ -21,6 +21,12 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**,/auth-service/**
+        - id: task-service
+          uri: lb://task-service
+          predicates:
+            - Path=/task/**,/task-service/**
+          filters:
+            - AuthFilter
 
 
 
