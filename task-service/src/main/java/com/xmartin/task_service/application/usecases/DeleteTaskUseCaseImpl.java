@@ -11,6 +11,8 @@ import com.xmartin.task_service.domain.port.out.UserClientRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+
 @Service
 @RequiredArgsConstructor
 public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
@@ -26,9 +28,12 @@ public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
         taskRepositoryPort.deleteTask(id);
 
         UserModel user = userClientRepositoryPort.getUserById(savedTask.getUserId());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         DeleteTaskEvent deleteTaskEvent = new DeleteTaskEvent(savedTask.getId(),
-                savedTask.getTitle(), savedTask.getDescription(), savedTask.getCreateDate(),
-                savedTask.getUpdateDate(), savedTask.getDueDate(), savedTask.getStatus(), user);
+                savedTask.getTitle(), savedTask.getDescription(), dateFormat.format(savedTask.getCreateDate()),
+                dateFormat.format(savedTask.getUpdateDate()), dateFormat.format(savedTask.getDueDate()), savedTask.getStatus(), user);
 
         eventPublisherPort.publish(deleteTaskEvent);
     }

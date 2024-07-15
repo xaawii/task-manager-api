@@ -1,8 +1,9 @@
-package com.xmartin.task_service.domain.model;
+package com.xmartin.notification_service.domain.model;
 
-import com.xmartin.task_service.domain.enums.Status;
 
-public record CreateTaskEvent(
+import com.xmartin.notification_service.domain.enums.Status;
+
+public record UpdateTaskEvent(
         Long id,
         String title,
         String description,

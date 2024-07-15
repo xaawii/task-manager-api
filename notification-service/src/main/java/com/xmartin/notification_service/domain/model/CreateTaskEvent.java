@@ -1,6 +1,10 @@
-package com.xmartin.task_service.domain.model;
+package com.xmartin.notification_service.domain.model;
 
-import com.xmartin.task_service.domain.enums.Status;
+
+
+import com.xmartin.notification_service.domain.enums.Status;
+
+import java.util.Date;
 
 public record CreateTaskEvent(
         Long id,

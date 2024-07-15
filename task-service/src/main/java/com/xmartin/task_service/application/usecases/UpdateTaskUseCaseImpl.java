@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 @Service
@@ -33,9 +34,13 @@ public class UpdateTaskUseCaseImpl implements UpdateTaskUseCase {
 
         TaskModel savedTask = taskRepositoryPort.saveTask(taskModel);
         UserModel user = userClientRepositoryPort.getUserById(savedTask.getUserId());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         UpdateTaskEvent updateTaskEvent = new UpdateTaskEvent(savedTask.getId(),
-                savedTask.getTitle(), savedTask.getDescription(), savedTask.getCreateDate(),
-                savedTask.getUpdateDate(), savedTask.getDueDate(), savedTask.getStatus(), user);
+                savedTask.getTitle(), savedTask.getDescription(), dateFormat.format(savedTask.getCreateDate()),
+                dateFormat.format(savedTask.getUpdateDate()), dateFormat.format(savedTask.getDueDate()),
+                savedTask.getStatus(), user);
 
         eventPublisherPort.publish(updateTaskEvent);
 
