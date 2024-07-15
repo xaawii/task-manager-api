@@ -62,6 +62,8 @@ springdoc:
         name: User Service
       - url: /auth-service/v3/api-docs
         name: Auth Service
+      - url: /task-service/v3/api-docs
+        name: Task Service
 
     disable-swagger-default-url: true
 

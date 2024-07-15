@@ -16,6 +16,7 @@ import com.xmartin.authservice.infraestructure.mappers.RequestMapper;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class AuthUserController {
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackLogin")
     @Operation(summary = "Log in", description = "Log in a user in the application")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws UserNotFoundException, WrongPasswordException {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) throws UserNotFoundException, WrongPasswordException {
 
         String newToken = authService.login(loginMapper.loginDtoToModel(loginDto));
         return ResponseEntity.ok(TokenDto.builder().token(newToken).build());
