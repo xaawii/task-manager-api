@@ -1,8 +1,8 @@
 package com.xmartin.userservice.domain.port.out;
 
 
-import com.xmartin.userservice.domain.model.UserModel;
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
+import com.xmartin.userservice.domain.model.UserModel;
 
 
 public interface UserServicePort {
@@ -13,6 +13,8 @@ public interface UserServicePort {
 
 
     UserModel getUserByEmail(String email) throws UserNotFoundException;
+
+    UserModel getUserById(Integer id) throws UserNotFoundException;
 
     boolean userExists(String email);
 

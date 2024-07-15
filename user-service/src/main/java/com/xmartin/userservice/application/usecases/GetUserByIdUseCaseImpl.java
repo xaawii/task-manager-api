@@ -2,19 +2,19 @@ package com.xmartin.userservice.application.usecases;
 
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.userservice.domain.model.UserModel;
-import com.xmartin.userservice.domain.port.in.GetUserUseCase;
+import com.xmartin.userservice.domain.port.in.GetUserByIdUseCase;
 import com.xmartin.userservice.domain.port.out.UserServicePort;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
-public class GetUserUseCaseImpl implements GetUserUseCase {
+@RequiredArgsConstructor
+public class GetUserByIdUseCaseImpl implements GetUserByIdUseCase {
 
     private final UserServicePort userServicePort;
 
     @Override
-    public UserModel getUserByEmail(String email) throws UserNotFoundException {
-        return userServicePort.getUserByEmail(email);
+    public UserModel getUserById(Integer userId) throws UserNotFoundException {
+        return userServicePort.getUserById(userId);
     }
 }

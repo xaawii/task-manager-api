@@ -18,8 +18,23 @@ spring:
       hibernate:
         dialect: ${DB_DIALECT:org.hibernate.dialect.MySQLDialect}
 
+  ### LIQUIBASE ###
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
+
+  ### KAFKA ###
+  kafka:
+    producer:
+      acks: -1
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_HOST:localhost}:${KAFKA_BOOTSTRAP_PORT:29092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+topics:
+  kafka:
+    create-task: "create-task"
+    update-task: "update-task"
+    delete-task: "delete-task"
 
 
 

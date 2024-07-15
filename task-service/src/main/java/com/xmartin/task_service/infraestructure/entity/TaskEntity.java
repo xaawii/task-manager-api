@@ -30,6 +30,6 @@ public class TaskEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
 }

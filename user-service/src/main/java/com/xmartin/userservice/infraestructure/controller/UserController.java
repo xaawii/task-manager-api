@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @Operation(summary = "Delete user by email", description = "Delete user by email")
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/email/{email}")
 
     public ResponseEntity<?> deleteUser(@PathVariable String email) throws UserNotFoundException {
 
@@ -42,15 +42,23 @@ public class UserController {
     }
 
     @Operation(summary = "Get user by email", description = "Get user by email")
-    @GetMapping("/{email}")
-    public ResponseEntity<?> getUser(@PathVariable String email) throws UserNotFoundException {
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) throws UserNotFoundException {
 
         return ResponseEntity.ok(userMapper.toResponse(userService.getUserByEmail(email)));
 
     }
 
+    @Operation(summary = "Get user by id", description = "Get user by id")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) throws UserNotFoundException {
+
+        return ResponseEntity.ok(userMapper.toResponse(userService.getUserById(id)));
+
+    }
+
     @Operation(summary = "Check if user exist by email", description = "Check if user exist by email")
-    @GetMapping("/exist/{email}")
+    @GetMapping("/exist/email/{email}")
     public ResponseEntity<?> getUserExistByEmail(@PathVariable String email) {
 
         boolean exist = userService.userExists(email);

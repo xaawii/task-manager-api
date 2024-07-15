@@ -12,12 +12,12 @@ import java.util.Optional;
 @FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping("/users/{email}")
-    public Optional<UserModel> getUserByEmail(@PathVariable String email);
+    @GetMapping("/users/email/{email}")
+    Optional<UserModel> getUserByEmail(@PathVariable String email);
 
-    @GetMapping("/users/exist/{email}")
-    public boolean getUserExistsByEmail(@PathVariable String email);
+    @GetMapping("/users/exist/email/{email}")
+    boolean getUserExistsByEmail(@PathVariable String email);
 
     @PostMapping("/users/save")
-    public UserModel saveUser(@RequestBody UserModel userModel);
+    UserModel saveUser(@RequestBody UserModel userModel);
 }

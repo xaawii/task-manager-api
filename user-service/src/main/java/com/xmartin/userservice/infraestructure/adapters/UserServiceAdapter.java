@@ -36,6 +36,12 @@ public class UserServiceAdapter implements UserServicePort {
     }
 
     @Override
+    public UserModel getUserById(Integer id) throws UserNotFoundException {
+        return userConverter.toModel(jpaUserRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id)));
+    }
+
+    @Override
     public boolean userExists(String email) {
         return jpaUserRepository.existsByEmail(email);
     }

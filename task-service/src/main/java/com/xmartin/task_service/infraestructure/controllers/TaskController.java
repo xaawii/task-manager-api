@@ -33,7 +33,7 @@ public class TaskController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request, @PathVariable Long userId) {
+    public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request, @PathVariable Integer userId) {
         TaskModel newTask = taskMapper.toModel(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskMapper.toResponse(taskService.createTask(newTask)));
     }

@@ -3,21 +3,19 @@ package com.xmartin.userservice.application.services;
 import com.xmartin.userservice.domain.exceptions.EmailAlreadyInUseException;
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.userservice.domain.model.UserModel;
-import com.xmartin.userservice.domain.port.in.DeleteUserUseCase;
-import com.xmartin.userservice.domain.port.in.GetUserUseCase;
-import com.xmartin.userservice.domain.port.in.SaveUserUseCase;
-import com.xmartin.userservice.domain.port.in.UserExistsUseCase;
+import com.xmartin.userservice.domain.port.in.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUserUseCase, SaveUserUseCase {
+public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUserByEmailUseCase, SaveUserUseCase, GetUserByIdUseCase {
 
     private final UserExistsUseCase userExistsUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
-    private final GetUserUseCase getUserUseCase;
+    private final GetUserByEmailUseCase getUserByEmailUseCase;
     private final SaveUserUseCase saveUserUseCase;
+    private final GetUserByIdUseCase getUserByIdUseCase;
 
     @Override
     public boolean userExists(String email) {
@@ -29,13 +27,20 @@ public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUse
         deleteUserUseCase.deleteUser(email);
     }
 
-    @Override
-    public UserModel getUserByEmail(String email) throws UserNotFoundException {
-        return getUserUseCase.getUserByEmail(email);
-    }
+
 
     @Override
     public UserModel saveUser(UserModel user) throws EmailAlreadyInUseException {
         return saveUserUseCase.saveUser(user);
+    }
+
+    @Override
+    public UserModel getUserByEmail(String email) throws UserNotFoundException {
+        return getUserByEmailUseCase.getUserByEmail(email);
+    }
+
+    @Override
+    public UserModel getUserById(Integer userId) throws UserNotFoundException {
+        return getUserByIdUseCase.getUserById(userId);
     }
 }

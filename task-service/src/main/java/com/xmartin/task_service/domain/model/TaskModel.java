@@ -23,6 +23,6 @@ public class TaskModel {
     private Date updateDate;
     private Date dueDate;
     private Status status;
-    private Long userId;
+    private Integer userId;
 
 }

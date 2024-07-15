@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class TaskMapper {
 
-    public TaskModel toModel(CreateTaskRequest createTaskRequest, Long userId) {
+    public TaskModel toModel(CreateTaskRequest createTaskRequest, Integer userId) {
         return TaskModel.builder()
                 .title(createTaskRequest.getTitle())
                 .description(createTaskRequest.getDescription())
