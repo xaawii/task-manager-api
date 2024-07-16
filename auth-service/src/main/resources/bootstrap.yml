@@ -54,3 +54,7 @@ resilience4j.circuitbreaker:
       recordExceptions:
         - java.net.ConnectException
         - feign.FeignException$ServiceUnavailable
+
+### ADMIN ROUTES ##
+admin-paths:
+  paths:
