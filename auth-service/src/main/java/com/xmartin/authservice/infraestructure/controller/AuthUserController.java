@@ -27,6 +27,7 @@ import java.net.ConnectException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthUserController {
 
     private final AuthService authService;

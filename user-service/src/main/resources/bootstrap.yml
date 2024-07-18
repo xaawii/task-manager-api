@@ -6,7 +6,7 @@ spring:
   #### BBDD AND JPA CONFIG ###
   datasource:
     driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3907}/${DB_NAME:Auth}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:8004}/${DB_NAME:Auth}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
