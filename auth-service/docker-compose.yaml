@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+
+  mysql:
+    container_name: mysql-auth
+    image: mysql:latest
+    ports:
+      - "8004:3306"
+    environment:
+      MYSQL_USER: xavi
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Auth
+    volumes:
+      - auth-data-mysql:/var/lib/mysql
+    restart: always
+
+volumes:
+  auth-data-mysql:
+    name: auth-data-mysql
