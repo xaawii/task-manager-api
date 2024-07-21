@@ -13,9 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,19 +25,17 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendCreateNotification(CreateTaskEvent event) throws SendEmailException {
 
-        String message =
-                """
-                        ===================================================
-                        Task Created Notification
-                        ----------------------------------------------------
-                        Dear %s,
-                        You have successfully created a task with the title: %s, with a due date for %s.
-                                        
-                                        
-                        Task Manager Api
-                        ===================================================
-                        """
-                        .formatted(event.user().name(), event.title(), formatDate(event.dueDate()));
+        String message = """
+                ===================================================
+                Task Created Notification
+                ----------------------------------------------------
+                Dear %s,
+                You have successfully created a task with the title: %s, with a due date for %s.
+                                
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.user().name(), event.title(), event.dueDate());
 
         log.info("\n{}", message);
         sendEmail(event.user().email(), "Task Created Notification", message);
@@ -49,21 +44,18 @@ public class MailSenderAdapter implements MailSenderPort {
 
     @Override
     public void sendUpdateNotification(UpdateTaskEvent event) throws SendEmailException {
-        String message =
-                """
-                        ===================================================
-                        Task Updated Notification
-                        ----------------------------------------------------
-                        Dear %s,
-                        You have successfully updated a task with the title: %s, with a due date for %s.
-                                        
-                        Current task status: %s
-                                        
-                        Task Manager Api
-                        ===================================================
-                        """
-                        .formatted(event.user().name(), event.title(), formatDate(event.dueDate()),
-                                event.status().getText());
+        String message = """
+                ===================================================
+                Task Updated Notification
+                ----------------------------------------------------
+                Dear %s,
+                You have successfully updated a task with the title: %s, with a due date for %s.
+                                
+                Current task status: %s
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.user().name(), event.title(), event.dueDate(), event.status().getText());
 
         log.info("\n{}", message);
         sendEmail(event.user().email(), "Task Updated Notification", message);
@@ -71,19 +63,17 @@ public class MailSenderAdapter implements MailSenderPort {
 
     @Override
     public void sendDeleteNotification(DeleteTaskEvent event) throws SendEmailException {
-        String message =
-                """
-                        ===================================================
-                        Task Deleted Notification
-                        ----------------------------------------------------
-                        Dear %s,
-                        You have successfully deleted a task with the title: %s.
-                                        
-                                        
-                        Task Manager Api
-                        ===================================================
-                        """
-                        .formatted(event.user().name(), event.title());
+        String message = """
+                ===================================================
+                Task Deleted Notification
+                ----------------------------------------------------
+                Dear %s,
+                You have successfully deleted a task with the title: %s.
+                                
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.user().name(), event.title());
 
         log.info("\n{}", message);
         sendEmail(event.user().email(), "Task Deleted Notification", message);
@@ -104,12 +94,4 @@ public class MailSenderAdapter implements MailSenderPort {
         }
     }
 
-    private String formatDate(String date) {
-        DateTimeFormatter isoFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        LocalDateTime dueDate = LocalDateTime.parse(date, isoFormatter);
-
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        return dueDate.format(dateFormatter);
-    }
 }

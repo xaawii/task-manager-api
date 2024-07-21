@@ -10,10 +10,8 @@ import com.xmartin.task_service.domain.port.out.UserClientRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +24,17 @@ public class CreateTaskUseCaseImpl implements CreateTaskUseCase {
     @Override
     public TaskModel createTask(TaskModel taskModel) {
 
-        taskModel.setCreateDate(Timestamp.from(Instant.now()));
-        taskModel.setUpdateDate(Timestamp.from(Instant.now()));
+        taskModel.setCreateDate(LocalDateTime.now());
+        taskModel.setUpdateDate(LocalDateTime.now());
         TaskModel savedTask = taskRepositoryPort.saveTask(taskModel);
 
         UserModel user = userClientRepositoryPort.getUserById(savedTask.getUserId());
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         CreateTaskEvent createTaskEvent = new CreateTaskEvent(savedTask.getId(),
-                savedTask.getTitle(), savedTask.getDescription(), dateFormat.format(savedTask.getCreateDate()),
-                dateFormat.format(savedTask.getCreateDate()), dateFormat.format(savedTask.getCreateDate()), savedTask.getStatus(), user);
+                savedTask.getTitle(), savedTask.getDescription(), savedTask.getCreateDate().format(formatter),
+                savedTask.getCreateDate().format(formatter), savedTask.getCreateDate().format(formatter), savedTask.getStatus(), user);
         eventPublisherPort.publish(createTaskEvent);
 
         return savedTask;

@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -22,11 +22,11 @@ public class TaskEntity {
     private String title;
     private String description;
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDateTime createDate;
     @Column(name = "update_date")
-    private Date updateDate;
+    private LocalDateTime updateDate;
     @Column(name = "due_date")
-    private Date dueDate;
+    private LocalDateTime dueDate;
     @Enumerated(EnumType.STRING)
     private Status status;
     @Column(name = "user_id")
