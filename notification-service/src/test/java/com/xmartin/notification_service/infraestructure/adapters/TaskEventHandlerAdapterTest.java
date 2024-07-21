@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -71,7 +72,7 @@ class TaskEventHandlerAdapterTest {
         when(objectMapper.readValue(json, CreateTaskEvent.class)).thenReturn(createTaskEvent);
 
         // When
-        taskEventHandlerAdapter.createTaskListener(json);
+        assertDoesNotThrow(() -> taskEventHandlerAdapter.createTaskListener(json));
 
         // Then
         verify(objectMapper).readValue(json, CreateTaskEvent.class);
@@ -115,7 +116,7 @@ class TaskEventHandlerAdapterTest {
         when(objectMapper.readValue(json, DeleteTaskEvent.class)).thenReturn(deleteTaskEvent);
 
         // When
-        taskEventHandlerAdapter.deleteTaskListener(json);
+        assertDoesNotThrow(() -> taskEventHandlerAdapter.deleteTaskListener(json));
 
         // Then
         verify(objectMapper).readValue(json, DeleteTaskEvent.class);
@@ -133,7 +134,7 @@ class TaskEventHandlerAdapterTest {
         when(objectMapper.readValue(json, UpdateTaskEvent.class)).thenReturn(updateTaskEvent);
 
         // When
-        taskEventHandlerAdapter.updateTaskListener(json);
+        assertDoesNotThrow(() -> taskEventHandlerAdapter.updateTaskListener(json));
 
         // Then
         verify(objectMapper).readValue(json, UpdateTaskEvent.class);
