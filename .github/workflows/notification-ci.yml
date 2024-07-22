@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: notification-build-artifacts
-          path: target/
+          path: notification-service/target/
 
   test:
     runs-on: ubuntu-latest
@@ -47,6 +47,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: notification-build-artifacts
-          path: target/
+          path: notification-service/target/
       - name: Run Tests with Maven
         run: cd notification-service && mvn --batch-mode test
