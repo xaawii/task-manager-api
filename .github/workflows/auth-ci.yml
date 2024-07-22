@@ -1,3 +1,4 @@
+
 name: Auth Service CI
 
 on:
@@ -23,9 +24,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: |
-          cd auth-service
-          mvn --batch-mode package
+        run: cd auth-service && mvn --batch-mode package -e -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -50,11 +49,4 @@ jobs:
           name: auth-build-artifacts
           path: auth-service/target/
       - name: Run Tests with Maven
-        run: |
-          cd auth-service
-          mvn --batch-mode test
-      - name: Upload test reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: auth-test-reports
-          path: auth-service/target/surefire-reports/
+        run: cd auth-service && mvn --batch-mode test
