@@ -16,6 +16,9 @@ import com.xmartin.authservice.infraestructure.mappers.RequestMapper;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,6 +40,10 @@ public class AuthUserController {
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackLogin")
     @Operation(summary = "Log in", description = "Log in a user in the application")
+    @ApiResponse(responseCode = "200", description = "Successfully login",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "400", description = "User Not Found", content = @Content)
+    @ApiResponse(responseCode = "400", description = "Wrong Credentials", content = @Content)
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) throws UserNotFoundException, WrongPasswordException {
 
@@ -46,6 +53,11 @@ public class AuthUserController {
     }
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidate")
+    @Operation(summary = "Validate token", description = "Check if token is valid")
+    @ApiResponse(responseCode = "200", description = "Successfully validated",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "403", description = "Invalid token", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @PostMapping("/validate")
     public ResponseEntity<?> validate(@RequestParam String token, @RequestBody RequestDto requestDto) throws InvalidTokenException {
 
@@ -54,7 +66,11 @@ public class AuthUserController {
 
     }
 
+
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackSave")
+    @ApiResponse(responseCode = "200", description = "Successfully registered",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "400", description = "Email already in use", content = @Content)
     @Operation(summary = "Sign up", description = "Sign up a user in the application")
     @PostMapping("/create")
     public ResponseEntity<?> save(@RequestBody RegisterDto registerDto) throws EmailAlreadyInUseException {
