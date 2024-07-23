@@ -19,7 +19,7 @@ openapi:
   service:
     title: auth-service doc
     version: 1.0.0
-    url: http://localhost:8080 #api gateway url
+    url: http://${GATEWAY_HOST:localhost}:${GATEWAY_PORT:8080} #api gateway url
 springdoc:
   api-docs:
     path: v3/api-docs
@@ -33,7 +33,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      default-zone: http://localhost:8761/eureka
+      default-zone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
