@@ -1,0 +1,205 @@
+
+services:
+
+  eureka-service:
+    container_name: eureka-service
+    image: xaawii/task-api-eureka:latest
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_HOST: eureka-service
+      PORT: 8761
+    restart: always
+    networks:
+      - task-api-net
+  
+  mysql-auth:
+    container_name: mysql-auth
+    image: mysql:latest
+    ports:
+      - "8004:3306"
+    environment:
+      MYSQL_USER: xavi
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Auth
+    volumes:
+      - auth-data-mysql:/var/lib/mysql
+    restart: always
+    networks:
+      - task-api-net
+  
+  user-service:
+    container_name: user-service
+    image: xaawii/task-api-user:latest
+    environment:
+      DB_USER: xavi
+      DB_PASSWORD: password
+      DB_NAME: Auth
+      DB_HOST: mysql-auth
+      DB_PORT: 3306
+      GATEWAY_HOST: gateway-service
+      GATEWAY_PORT: 8080
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: 8761
+      PORT: 0
+    restart: always
+    networks:
+      - task-api-net
+    depends_on:
+      - mysql-auth
+      - eureka-service
+  
+  auth-service:
+    container_name: auth-service
+    image: xaawii/task-api-auth:latest
+    environment:
+      GATEWAY_HOST: gateway-service
+      GATEWAY_PORT: 8080
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: 8761
+      SECRET_KEY: cmFuZG9tIGV4YW1wbGUsIHBsZWFzZSBjcmVhdGUgeW91ciBvd24gYmFzZTY0IHNlY3JldCBrZXkgYW5kIHJlcGxhY2UgaXQ=
+      KEY_EXPIRATION_MS: 3600000
+      PORT: 0
+    restart: always
+    networks:
+      - task-api-net
+    depends_on:
+      - mysql-auth
+      - eureka-service
+      - user-service
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEPER_TICK_TIME: 2000
+    ports:
+       - 22181:2181
+    restart: always
+    networks:
+      - task-api-net
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: always
+    networks:
+      - task-api-net
+
+  kafka_ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - 8090:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEPEER: zookeeper:2181
+    restart: always
+    networks:
+      - task-api-net
+
+
+  mysql-task:
+    container_name: mysql-task
+    image: mysql:latest
+    ports:
+      - "8005:3306"
+    environment:
+      MYSQL_USER: xavi
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Task
+    volumes:
+      - task-data-mysql:/var/lib/mysql
+    restart: always
+    networks:
+      - task-api-net
+
+  task-service:
+    container_name: task-service
+    image: xaawii/task-api-task:latest
+    environment:
+      DB_USER: xavi
+      DB_PASSWORD: password
+      DB_NAME: Task
+      DB_HOST: mysql-task
+      DB_PORT: 3306
+      GATEWAY_HOST: gateway-service
+      GATEWAY_PORT: 8080
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: 8761
+      KAFKA_BOOTSTRAP_HOST: kafka
+      KAFKA_BOOTSTRAP_PORT: 29092
+      PORT: 0
+    restart: always
+    networks:
+      - task-api-net
+    depends_on:
+      - mysql-task
+      - eureka-service
+      - user-service
+      - kafka_ui
+
+  notification-service:
+    container_name: notification-service
+    image: xaawii/task-api-notification:latest
+    environment:
+      MAIL_USERNAME: apitaskmanager1@gmail.com
+      MAIL_PASSWORD: dnyhvbpsinaphzcr
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: 8761
+      KAFKA_BOOTSTRAP_HOST: kafka
+      KAFKA_BOOTSTRAP_PORT: 29092
+      PORT: 0
+    restart: always
+    networks:
+      - task-api-net
+    depends_on:
+      - eureka-service
+      - task-service
+      - kafka_ui
+
+  gateway-service:
+    container_name: gateway-service
+    image: xaawii/task-api-gateway:latest
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: 8761
+      PORT: 8080
+    restart: always
+    networks:
+      - task-api-net
+    depends_on:
+      - eureka-service
+      - user-service
+      - auth-service
+      - task-service
+      - notification-service
+  
+
+volumes:
+  auth-data-mysql:
+    name: auth-data-mysql
+  task-data-mysql:
+    name: task-data-mysql
+
+networks:
+  task-api-net:
+    name: task-api-net
+    driver: bridge

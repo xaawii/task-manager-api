@@ -1,12 +1,12 @@
 spring:
   application:
-    name: task-service
+    name: user-service
 
 
   #### BBDD AND JPA CONFIG ###
   datasource:
     driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:8005}/${DB_NAME:Tasks}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:8004}/${DB_NAME:Auth}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
@@ -18,25 +18,15 @@ spring:
       hibernate:
         dialect: ${DB_DIALECT:org.hibernate.dialect.MySQLDialect}
 
-  ### LIQUIBASE ###
   liquibase:
-    change-log: classpath:db/changelog/changelog.xml
-
-  ### KAFKA ###
-  kafka:
-    producer:
-      acks: -1
-      bootstrap-servers: ${KAFKA_BOOTSTRAP_HOST:localhost}:${KAFKA_BOOTSTRAP_PORT:29092}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-topics:
-  kafka:
-    create-task: "create-task"
-    update-task: "update-task"
-    delete-task: "delete-task"
+    change-log: classpath:db/changelog.xml
 
 
+  #### MULTIPART FILE CONFIG ###
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:200MB}
+      max-request-size: ${MAX_REQUEST_SIZE:215MB}
 
 
 server:
@@ -67,10 +57,22 @@ eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
-    service-url:
-      default-zone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:eureka-service}:${EUREKA_PORT:8761}/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
 
 
+#### CIRCUIT BREAKER ###
+resilience4j.circuitbreaker:
+  instances:
+    concessionaire:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
