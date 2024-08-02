@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(originPatterns = "*")
 @Slf4j
 public class UserController {
 

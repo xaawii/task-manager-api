@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/task")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(originPatterns = "*")
 public class TaskController {
     private final TaskService taskService;
     private final TaskMapper taskMapper;
