@@ -30,7 +30,7 @@ import java.net.ConnectException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(originPatterns = "*")
 public class AuthUserController {
 
     private final AuthService authService;
