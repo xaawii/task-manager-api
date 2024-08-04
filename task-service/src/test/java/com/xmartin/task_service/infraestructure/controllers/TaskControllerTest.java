@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xmartin.task_service.application.service.TaskService;
 import com.xmartin.task_service.domain.enums.Status;
 import com.xmartin.task_service.domain.exceptions.TaskNotFoundException;
+import com.xmartin.task_service.domain.exceptions.UserNotFoundException;
 import com.xmartin.task_service.domain.model.TaskModel;
 import com.xmartin.task_service.infraestructure.controllers.dto.CreateTaskRequest;
 import com.xmartin.task_service.infraestructure.controllers.dto.TaskResponse;
@@ -208,6 +209,44 @@ class TaskControllerTest {
         //When - Then
         mockMvc.perform(delete("/task/{id}", id))
                 .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"));
+    }
+
+    @Test
+    void testDeleteAllTasksByUserId_success() throws Exception {
+        //Given
+        Integer id = 1;
+
+        //When - Then
+        mockMvc.perform(delete("/task/user/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().string("All tasks for user with ID: " + id + " deleted."));
+    }
+
+    @Test
+    void testDeleteAllTasksByUserId_UserNotFound() throws Exception {
+        //Given
+        Integer id = 1;
+
+        doThrow(new UserNotFoundException()).when(taskService).deleteTasksByUserId(id);
+
+        //When - Then
+        mockMvc.perform(delete("/task/user/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"));
+    }
+
+    @Test
+    void testDeleteAllTasksByIdInBatch_success() throws Exception {
+        //Given
+        List<Long> ids = List.of(1L, 2L);
+
+        //When - Then
+
+        mockMvc.perform(delete("/task/batch-delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"));
     }
 }

@@ -2,6 +2,7 @@ package com.xmartin.task_service.infraestructure.controllers;
 
 import com.xmartin.task_service.application.service.TaskService;
 import com.xmartin.task_service.domain.exceptions.TaskNotFoundException;
+import com.xmartin.task_service.domain.exceptions.UserNotFoundException;
 import com.xmartin.task_service.domain.model.TaskModel;
 import com.xmartin.task_service.infraestructure.controllers.dto.CreateTaskRequest;
 import com.xmartin.task_service.infraestructure.controllers.dto.TaskResponse;
@@ -58,7 +59,7 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "Successfully created task",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
-    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
+    @ApiResponse(responseCode = "404", description = "Requested Resource for create Not Found", content = @Content)
     @PostMapping("/{userId}")
     public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request, @PathVariable Integer userId) {
         TaskModel newTask = taskMapper.toModel(request, userId);
@@ -71,7 +72,6 @@ public class TaskController {
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
     @ApiResponse(responseCode = "404", description = "Requested Resource for update Not Found", content = @Content)
-    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@RequestBody UpdateTaskRequest request, @PathVariable Long id) throws TaskNotFoundException {
         TaskModel updatedTask = taskMapper.toModel(request, id);
@@ -84,10 +84,31 @@ public class TaskController {
             content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
     @ApiResponse(responseCode = "404", description = "Requested Resource for delete Not Found", content = @Content)
-    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTaskById(@PathVariable Long id) throws TaskNotFoundException {
         taskService.deleteTask(id);
         return ResponseEntity.ok("Task deleted.");
+    }
+
+    @Operation(summary = "Delete all tasks by User ID", description = "Delete all tasks by User ID")
+    @ApiResponse(responseCode = "200", description = "Successfully deleted all tasks",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
+    @ApiResponse(responseCode = "404", description = "Requested Resource for delete Not Found", content = @Content)
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deleteAllTasksByUserId(@PathVariable Integer userId) throws UserNotFoundException {
+        taskService.deleteTasksByUserId(userId);
+        return ResponseEntity.ok("All tasks for user with ID: " + userId + " deleted.");
+    }
+
+    @Operation(summary = "Delete all tasks by ID in batch", description = "Delete all tasks by ID in batch")
+    @ApiResponse(responseCode = "200", description = "Successfully deleted all tasks",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
+    @ApiResponse(responseCode = "404", description = "Requested Resource for delete Not Found", content = @Content)
+    @DeleteMapping("/batch-delete")
+    public ResponseEntity<String> deleteAllTasksByIdInBatch(@RequestBody List<Long> ids) throws TaskNotFoundException, UserNotFoundException {
+        taskService.deleteTaskByIdInBatch(ids);
+        return ResponseEntity.ok("All tasks deleted.");
     }
 }

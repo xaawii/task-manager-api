@@ -5,7 +5,7 @@ import com.xmartin.task_service.domain.exceptions.TaskNotFoundException;
 import com.xmartin.task_service.domain.model.TaskModel;
 import com.xmartin.task_service.infraestructure.entity.TaskEntity;
 import com.xmartin.task_service.infraestructure.entity.converters.TaskConverter;
-import com.xmartin.task_service.infraestructure.repository.JpaTaskRespository;
+import com.xmartin.task_service.infraestructure.repository.JpaTaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ class TaskRepositoryAdapterTest {
     private TaskRepositoryAdapter taskRepositoryAdapter;
 
     @Mock
-    private JpaTaskRespository jpaTaskRespository;
+    private JpaTaskRepository jpaTaskRepository;
 
     @Mock
     private TaskConverter taskConverter;
@@ -69,14 +69,14 @@ class TaskRepositoryAdapterTest {
         //Given
         Long taskId = 1L;
 
-        when(jpaTaskRespository.existsById(taskId)).thenReturn(true);
+        when(jpaTaskRepository.existsById(taskId)).thenReturn(true);
 
         //When
         assertDoesNotThrow(() -> taskRepositoryAdapter.deleteTask(taskId));
 
         //Then
-        verify(jpaTaskRespository).existsById(taskId);
-        verify(jpaTaskRespository).deleteById(taskId);
+        verify(jpaTaskRepository).existsById(taskId);
+        verify(jpaTaskRepository).deleteById(taskId);
     }
 
     @Test
@@ -84,14 +84,14 @@ class TaskRepositoryAdapterTest {
         //Given
         Long taskId = 5L;
 
-        when(jpaTaskRespository.existsById(taskId)).thenReturn(false);
+        when(jpaTaskRepository.existsById(taskId)).thenReturn(false);
 
         //When
         assertThrows(TaskNotFoundException.class, () -> taskRepositoryAdapter.deleteTask(taskId));
 
         //Then
-        verify(jpaTaskRespository).existsById(taskId);
-        verify(jpaTaskRespository, never()).deleteById(taskId);
+        verify(jpaTaskRepository).existsById(taskId);
+        verify(jpaTaskRepository, never()).deleteById(taskId);
     }
 
     @Test
@@ -101,7 +101,7 @@ class TaskRepositoryAdapterTest {
         TaskEntity savedTaskEntity = new TaskEntity();
 
         when(taskConverter.toEntity(taskModel)).thenReturn(taskEntity);
-        when(jpaTaskRespository.save(taskEntity)).thenReturn(savedTaskEntity);
+        when(jpaTaskRepository.save(taskEntity)).thenReturn(savedTaskEntity);
         when(taskConverter.toModel(savedTaskEntity)).thenReturn(savedTaskModel);
 
         //When
@@ -113,7 +113,7 @@ class TaskRepositoryAdapterTest {
         assertEquals(savedTaskModel.getTitle(), result.getTitle());
 
         verify(taskConverter).toEntity(taskModel);
-        verify(jpaTaskRespository).save(taskEntity);
+        verify(jpaTaskRepository).save(taskEntity);
         verify(taskConverter).toModel(savedTaskEntity);
     }
 
@@ -123,7 +123,7 @@ class TaskRepositoryAdapterTest {
         Long taskId = 1L;
         TaskEntity taskEntity = new TaskEntity();
 
-        when(jpaTaskRespository.findById(taskId)).thenReturn(Optional.of(taskEntity));
+        when(jpaTaskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
         when(taskConverter.toModel(taskEntity)).thenReturn(savedTaskModel);
 
         //When
@@ -134,7 +134,7 @@ class TaskRepositoryAdapterTest {
         assertEquals(savedTaskModel.getId(), result.getId());
         assertEquals(savedTaskModel.getTitle(), result.getTitle());
 
-        verify(jpaTaskRespository).findById(taskId);
+        verify(jpaTaskRepository).findById(taskId);
         verify(taskConverter).toModel(taskEntity);
     }
 
@@ -143,13 +143,13 @@ class TaskRepositoryAdapterTest {
         //Given
         Long taskId = 5L;
 
-        when(jpaTaskRespository.findById(taskId)).thenReturn(Optional.empty());
+        when(jpaTaskRepository.findById(taskId)).thenReturn(Optional.empty());
 
         //When
         assertThrows(TaskNotFoundException.class, () -> taskRepositoryAdapter.getTaskById(taskId));
 
         //Then
-        verify(jpaTaskRespository).findById(taskId);
+        verify(jpaTaskRepository).findById(taskId);
         verify(taskConverter, never()).toModel(any(TaskEntity.class));
     }
 
@@ -159,7 +159,7 @@ class TaskRepositoryAdapterTest {
         Long userId = 1L;
         TaskEntity taskEntity = new TaskEntity();
 
-        when(jpaTaskRespository.findTasksByUserId(userId)).thenReturn(Collections.singletonList(taskEntity));
+        when(jpaTaskRepository.findTasksByUserId(userId)).thenReturn(Collections.singletonList(taskEntity));
         when(taskConverter.toModelList(anyList())).thenReturn(Collections.singletonList(savedTaskModel));
 
         //When
@@ -172,7 +172,54 @@ class TaskRepositoryAdapterTest {
         assertEquals(savedTaskModel.getId(), result.get(0).getId());
         assertEquals(savedTaskModel.getTitle(), result.get(0).getTitle());
 
-        verify(jpaTaskRespository).findTasksByUserId(userId);
+        verify(jpaTaskRepository).findTasksByUserId(userId);
         verify(taskConverter).toModelList(anyList());
+    }
+
+    @Test
+    void testDeleteAllTasksByUserId() {
+        //Given
+        Integer userId = 1;
+
+        //When
+
+        taskRepositoryAdapter.deleteAllTasksByUserId(userId);
+
+        //Then
+        verify(jpaTaskRepository).deleteByUserId(userId);
+
+    }
+
+    @Test
+    void testDeleteTasksByIdInBatch() {
+        //Given
+        List<Long> ids = Collections.singletonList(1L);
+
+        //When
+        taskRepositoryAdapter.deleteTasksByIdInBatch(ids);
+
+        //Then
+        verify(jpaTaskRepository).deleteAllByIdInBatch(ids);
+
+    }
+
+    @Test
+    void testGetTasksByIdInBatch() {
+        //Given
+        List<Long> ids = Collections.singletonList(1L);
+        List<TaskEntity> entityList = Collections.singletonList(new TaskEntity());
+        List<TaskModel> taskModelList = Collections.singletonList(taskModel);
+
+        when(jpaTaskRepository.findAllById(ids)).thenReturn(entityList);
+        when(taskConverter.toModelList(anyList())).thenReturn(taskModelList);
+
+        //When
+        List<TaskModel> resultList = taskRepositoryAdapter.getTasksByIdInBatch(ids);
+
+        //Then
+        assertEquals(1L, resultList.get(0).getId());
+        verify(jpaTaskRepository).findAllById(ids);
+        verify(taskConverter).toModelList(anyList());
+
     }
 }

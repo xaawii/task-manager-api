@@ -8,10 +8,16 @@ import java.util.List;
 public interface TaskRepositoryPort {
     void deleteTask(Long id) throws TaskNotFoundException;
 
+    void deleteAllTasksByUserId(Integer userId);
+
+    void deleteTasksByIdInBatch(List<Long> ids);
+
     TaskModel saveTask(TaskModel taskModel);
 
     TaskModel getTaskById(Long id) throws TaskNotFoundException;
 
     List<TaskModel> getTasksByUserId(Long id);
+
+    List<TaskModel> getTasksByIdInBatch(List<Long> ids);
 
 }
