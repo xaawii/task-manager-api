@@ -37,3 +37,4 @@ build/
 
 ### DOCKER ####
 docker-compose.yml
+Dockerfile

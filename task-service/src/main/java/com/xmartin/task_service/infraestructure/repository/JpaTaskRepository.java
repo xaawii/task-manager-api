@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface JpaTaskRespository extends JpaRepository<TaskEntity, Long> {
+public interface JpaTaskRepository extends JpaRepository<TaskEntity, Long> {
     List<TaskEntity> findTasksByUserId(Long id);
+
+    void deleteByUserId(Integer userId);
 
 }

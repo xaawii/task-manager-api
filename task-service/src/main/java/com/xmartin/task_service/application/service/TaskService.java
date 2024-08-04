@@ -1,6 +1,7 @@
 package com.xmartin.task_service.application.service;
 
 import com.xmartin.task_service.domain.exceptions.TaskNotFoundException;
+import com.xmartin.task_service.domain.exceptions.UserNotFoundException;
 import com.xmartin.task_service.domain.model.TaskModel;
 import com.xmartin.task_service.domain.port.in.*;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +11,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService implements CreateTaskUseCase, DeleteTaskUseCase, GetTaskUseCase, GetTasksFromUserUseCase, UpdateTaskUseCase {
+public class TaskService implements CreateTaskUseCase, DeleteTaskUseCase, GetTaskUseCase, GetTasksFromUserUseCase,
+        UpdateTaskUseCase, DeleteAllTasksByUserIdUseCase, DeleteTasksByIdInBatchUseCase {
 
     private final CreateTaskUseCase createTaskUseCase;
     private final UpdateTaskUseCase updateTaskUseCase;
     private final DeleteTaskUseCase deleteTaskUseCase;
     private final GetTaskUseCase getTaskUseCase;
     private final GetTasksFromUserUseCase getTasksFromUserUseCase;
+    private final DeleteAllTasksByUserIdUseCase deleteAllTasksByUserIdUseCase;
+    private final DeleteTasksByIdInBatchUseCase deleteTasksByIdInBatchUseCase;
 
     @Override
     public TaskModel createTask(TaskModel taskModel) {
@@ -41,5 +45,15 @@ public class TaskService implements CreateTaskUseCase, DeleteTaskUseCase, GetTas
     @Override
     public TaskModel updateTask(TaskModel taskModel) throws TaskNotFoundException {
         return updateTaskUseCase.updateTask(taskModel);
+    }
+
+    @Override
+    public void deleteTasksByUserId(Integer userId) throws UserNotFoundException {
+        deleteAllTasksByUserIdUseCase.deleteTasksByUserId(userId);
+    }
+
+    @Override
+    public void deleteTaskByIdInBatch(List<Long> ids) throws TaskNotFoundException, UserNotFoundException {
+        deleteTasksByIdInBatchUseCase.deleteTaskByIdInBatch(ids);
     }
 }
