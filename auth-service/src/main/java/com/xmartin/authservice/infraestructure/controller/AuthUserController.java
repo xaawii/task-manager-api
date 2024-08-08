@@ -53,7 +53,7 @@ public class AuthUserController {
     }
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidate")
-    @Operation(summary = "Validate token", description = "Check if token is valid")
+    @Operation(summary = "Validate token and request", description = "Check if token and request are valid")
     @ApiResponse(responseCode = "200", description = "Successfully validated",
             content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
     @ApiResponse(responseCode = "403", description = "Invalid token", content = @Content)
@@ -62,6 +62,20 @@ public class AuthUserController {
     public ResponseEntity<?> validate(@RequestParam String token, @RequestBody RequestDto requestDto) throws InvalidTokenException {
 
         String newToken = authService.validate(token, requestMapper.requestDtoToModel(requestDto));
+        return ResponseEntity.ok(TokenDto.builder().token(newToken).build());
+
+    }
+
+    @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidateToken")
+    @Operation(summary = "Validate token", description = "Check if token is valid")
+    @ApiResponse(responseCode = "200", description = "Successfully validated",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "403", description = "Invalid token", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
+    @PostMapping("/validate/token")
+    public ResponseEntity<?> validateToken(@RequestParam String token) throws InvalidTokenException {
+
+        String newToken = authService.validateToken(token);
         return ResponseEntity.ok(TokenDto.builder().token(newToken).build());
 
     }
@@ -85,6 +99,10 @@ public class AuthUserController {
     }
 
     public ResponseEntity<?> fallbackValidate(@RequestParam String token, @RequestBody RequestDto requestDto, Exception e) {
+        return failConnectionHandler(e);
+    }
+
+    public ResponseEntity<?> fallbackValidateToken(@RequestParam String token, Exception e) {
         return failConnectionHandler(e);
     }
 

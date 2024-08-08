@@ -134,7 +134,7 @@ class AuthUserServiceAdapterTest {
         when(userClient.getUserExistsByEmail(email)).thenReturn(true);
 
         //When
-        String validatedToken = authUserServiceAdapter.validate(token, requestModel);
+        String validatedToken = authUserServiceAdapter.validateRequestAndToken(token, requestModel);
 
         //Then
         assertEquals(token, validatedToken);
@@ -151,6 +151,37 @@ class AuthUserServiceAdapterTest {
         when(jwtProvider.validate(token, requestModel)).thenReturn(false);
 
         //When - Then
-        assertThrows(InvalidTokenException.class, () -> authUserServiceAdapter.validate(token, requestModel));
+        assertThrows(InvalidTokenException.class, () -> authUserServiceAdapter.validateRequestAndToken(token, requestModel));
+    }
+
+    @Test
+    void validateToken_success() throws InvalidTokenException {
+        //Given
+        String token = "token";
+        String email = "xavi@test.com";
+
+        when(jwtProvider.validateOnlyToken(token)).thenReturn(true);
+        when(jwtProvider.getEmailFromToken(token)).thenReturn(email);
+        when(userClient.getUserExistsByEmail(email)).thenReturn(true);
+
+        //When
+        String validatedToken = authUserServiceAdapter.validateToken(token);
+
+        //Then
+        assertEquals(token, validatedToken);
+        verify(jwtProvider, times(1)).validateOnlyToken(token);
+        verify(userClient, times(1)).getUserExistsByEmail(email);
+    }
+
+    @Test
+    void validateToken_InvalidToken() {
+        //Given
+        String token = "token";
+
+        when(jwtProvider.validateOnlyToken(token)).thenReturn(false);
+
+        //When - Then
+        assertThrows(InvalidTokenException.class, () -> authUserServiceAdapter.validateToken(token));
+        verify(userClient, never()).getUserExistsByEmail(anyString());
     }
 }
