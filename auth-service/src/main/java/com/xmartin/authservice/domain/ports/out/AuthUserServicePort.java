@@ -11,9 +11,10 @@ import com.xmartin.authservice.domain.model.UserModel;
 
 public interface AuthUserServicePort {
 
-    public UserModel save(RegisterModel registerModel) throws EmailAlreadyInUseException;
+    UserModel save(RegisterModel registerModel) throws EmailAlreadyInUseException;
 
-    public String login(LoginModel loginModel) throws WrongPasswordException, UserNotFoundException;
+    String login(LoginModel loginModel) throws WrongPasswordException, UserNotFoundException;
 
-    public String validate(String token, RequestModel requestModel) throws InvalidTokenException;
+    String validateRequestAndToken(String token, RequestModel requestModel) throws InvalidTokenException;
+    String validateToken(String token) throws InvalidTokenException;
 }

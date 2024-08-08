@@ -58,6 +58,17 @@ public class JwtProvider {
 
     }
 
+    public boolean validateOnlyToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return !isTokenExpired(token);
+
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

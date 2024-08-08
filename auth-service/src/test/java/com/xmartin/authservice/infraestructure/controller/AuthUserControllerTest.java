@@ -166,6 +166,32 @@ class AuthUserControllerTest {
     }
 
     @Test
+    void validateToken_success() throws Exception {
+
+        //Given
+        when(authService.validateToken("token")).thenReturn("newToken");
+
+        //When - Then
+        mockMvc.perform(post("/auth/validate/token")
+                        .param("token", "token"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("newToken"));
+    }
+
+    @Test
+    void validateToken_InvalidTokenException() throws Exception {
+
+        //Given
+        when(authService.validateToken("token")).thenThrow(new InvalidTokenException());
+
+        //When - Then
+        mockMvc.perform(post("/auth/validate/token")
+                        .param("token", "token"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"));
+    }
+
+    @Test
     void save_success() throws Exception {
         //Given
         RegisterDto registerDto = RegisterDto.builder()

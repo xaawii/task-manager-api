@@ -51,8 +51,18 @@ public class AuthUserServiceAdapter implements AuthUserServicePort {
     }
 
     @Override
-    public String validate(String token, RequestModel requestModel) throws InvalidTokenException {
+    public String validateRequestAndToken(String token, RequestModel requestModel) throws InvalidTokenException {
         if (!jwtProvider.validate(token, requestModel)) throw new InvalidTokenException();
+
+        String email = jwtProvider.getEmailFromToken(token);
+        if (!userClient.getUserExistsByEmail(email)) throw new InvalidTokenException();
+
+        return token;
+    }
+
+    @Override
+    public String validateToken(String token) throws InvalidTokenException {
+        if (!jwtProvider.validateOnlyToken(token)) throw new InvalidTokenException();
 
         String email = jwtProvider.getEmailFromToken(token);
         if (!userClient.getUserExistsByEmail(email)) throw new InvalidTokenException();

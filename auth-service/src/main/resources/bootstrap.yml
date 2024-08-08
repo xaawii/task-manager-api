@@ -6,7 +6,7 @@ spring:
 ### JWT ###
 jwt:
   secret: ${SECRET_KEY}
-  expirationms: 3600000
+  expirationms: ${KEY_EXPIRATION_MS:3600000}
 
 
 ### PORT ###
