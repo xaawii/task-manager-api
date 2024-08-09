@@ -2,8 +2,8 @@ package com.xmartin.userservice.application.usecases;
 
 import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.userservice.domain.model.UserModel;
+import com.xmartin.userservice.domain.port.out.TaskClientPort;
 import com.xmartin.userservice.domain.port.out.UserServicePort;
-import com.xmartin.userservice.infraestructure.client.TaskClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ class DeleteUserUseCaseImplTest {
     private UserServicePort userServicePort;
 
     @Mock
-    private TaskClient taskClient;
+    private TaskClientPort taskClientPort;
 
     private UserModel userModel;
 
@@ -51,7 +51,7 @@ class DeleteUserUseCaseImplTest {
 
         //Then
         verify(userServicePort).getUserByEmail(email);
-        verify(taskClient).deleteAllTasksByUserId(userModel.getId());
+        verify(taskClientPort).deleteAllTasksByUserId(userModel.getId());
         verify(userServicePort).deleteUser(email);
     }
 
@@ -66,7 +66,7 @@ class DeleteUserUseCaseImplTest {
 
         //Then
         verify(userServicePort).getUserByEmail(email);
-        verify(taskClient, never()).deleteAllTasksByUserId(userModel.getId());
+        verify(taskClientPort, never()).deleteAllTasksByUserId(userModel.getId());
         verify(userServicePort, never()).deleteUser(email);
     }
 }
