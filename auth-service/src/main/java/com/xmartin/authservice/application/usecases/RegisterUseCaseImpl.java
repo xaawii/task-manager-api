@@ -4,18 +4,29 @@ import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
 import com.xmartin.authservice.domain.model.RegisterModel;
 import com.xmartin.authservice.domain.model.UserModel;
 import com.xmartin.authservice.domain.ports.in.RegisterUseCase;
-import com.xmartin.authservice.domain.ports.out.AuthUserServicePort;
+import com.xmartin.authservice.domain.ports.out.UserClientPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RegisterUseCaseImpl implements RegisterUseCase {
 
-    private final AuthUserServicePort authUserServicePort;
+    private final UserClientPort userClientPort;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserModel register(RegisterModel registerModel) throws EmailAlreadyInUseException {
-        return authUserServicePort.save(registerModel);
+        String password = passwordEncoder.encode(registerModel.getPassword());
+
+        UserModel userModel = UserModel.builder()
+                .name(registerModel.getName())
+                .email(registerModel.getEmail())
+                .password(password)
+                .role("ROLE_USER")
+                .build();
+
+        return userClientPort.save(userModel);
     }
 }

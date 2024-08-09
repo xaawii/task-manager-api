@@ -1,8 +1,8 @@
-package com.xmartin.authservice.infraestructure.security;
+package com.xmartin.authservice.application.service;
 
 import com.xmartin.authservice.domain.model.RequestModel;
-import com.xmartin.authservice.infraestructure.dto.RequestDto;
 import com.xmartin.authservice.domain.model.UserModel;
+import com.xmartin.authservice.domain.ports.out.RouteValidatorPort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +26,7 @@ public class JwtProvider {
     @Value("${jwt.expirationms}")
     private Long expirationms;
 
-    private final RouteValidator routeValidator;
+    private final RouteValidatorPort routeValidatorPort;
 
     public String createToken(UserModel userModel) {
         Map<String, Object> claims = new HashMap<>();
@@ -50,7 +50,7 @@ public class JwtProvider {
             return false;
         }
 
-        if (isTokenExpired(token) || !isAdmin(token) && routeValidator.isAdminPath(requestModel)) {
+        if (isTokenExpired(token) || !isAdmin(token) && routeValidatorPort.isAdminPath(requestModel)) {
             return false;
         } else {
             return true;

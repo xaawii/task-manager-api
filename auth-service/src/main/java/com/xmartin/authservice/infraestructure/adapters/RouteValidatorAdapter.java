@@ -1,6 +1,7 @@
-package com.xmartin.authservice.infraestructure.security;
+package com.xmartin.authservice.infraestructure.adapters;
 
 import com.xmartin.authservice.domain.model.RequestModel;
+import com.xmartin.authservice.domain.ports.out.RouteValidatorPort;
 import com.xmartin.authservice.infraestructure.dto.RequestDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "admin-paths")
 @Getter
 @Setter
-public class RouteValidator {
+public class RouteValidatorAdapter implements RouteValidatorPort {
 
     private List<RequestDto> paths;
 
