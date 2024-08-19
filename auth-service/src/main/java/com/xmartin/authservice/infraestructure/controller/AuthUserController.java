@@ -112,7 +112,7 @@ public class AuthUserController {
 
     private static ResponseEntity<String> failConnectionHandler(Exception e) {
         if (e instanceof FeignException.ServiceUnavailable || e instanceof ConnectException) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Service not available, try again later.");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("User service not available, try again later.");
         }
 
         throw new RuntimeException(e);

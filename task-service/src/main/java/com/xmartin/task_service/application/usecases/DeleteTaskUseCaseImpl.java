@@ -10,6 +10,7 @@ import com.xmartin.task_service.domain.port.out.TaskRepositoryPort;
 import com.xmartin.task_service.domain.port.out.UserClientRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 
@@ -21,6 +22,7 @@ public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
     private final UserClientRepositoryPort userClientRepositoryPort;
     private final EventPublisherPort eventPublisherPort;
 
+    @Transactional
     @Override
     public void deleteTask(Long id) throws TaskNotFoundException {
 

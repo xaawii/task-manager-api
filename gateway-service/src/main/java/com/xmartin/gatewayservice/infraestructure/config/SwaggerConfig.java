@@ -1,4 +1,4 @@
-package com.xmartin.gatewayservice.config;
+package com.xmartin.gatewayservice.infraestructure.config;
 
 
 import lombok.RequiredArgsConstructor;

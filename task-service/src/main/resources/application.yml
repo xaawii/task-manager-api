@@ -84,3 +84,18 @@ eureka:
     prefer-ip-address: true
 
 
+### CIRCUIT BREAKER ###
+resilience4j.circuitbreaker:
+  instances:
+    userCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - java.net.ConnectException
+        - feign.FeignException$ServiceUnavailable

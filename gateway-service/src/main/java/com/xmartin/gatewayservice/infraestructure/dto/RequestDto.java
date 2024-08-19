@@ -1,5 +1,4 @@
-package com.xmartin.gatewayservice.dto;
-
+package com.xmartin.gatewayservice.infraestructure.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class TokenDto {
-    private String token;
+public class RequestDto {
+    private String uri;
+    private String method;
+
 }

@@ -7,6 +7,8 @@ import com.xmartin.userservice.domain.exceptions.UserNotFoundException;
 import com.xmartin.userservice.infraestructure.controller.dtos.UserRequest;
 import com.xmartin.userservice.infraestructure.controller.dtos.UserResponse;
 import com.xmartin.userservice.infraestructure.controller.mappers.UserMapper;
+import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,8 +16,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.ConnectException;
 
 @RestController
 @RequestMapping("/users")
@@ -40,6 +45,7 @@ public class UserController {
 
     }
 
+    @CircuitBreaker(name = "taskCircuitBreaker", fallbackMethod = "fallbackDeleteUser")
     @Operation(summary = "Delete user by email", description = "Delete user by email")
     @ApiResponse(responseCode = "200", description = "Successfully deleted user",
             content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
@@ -88,6 +94,18 @@ public class UserController {
         boolean exist = userService.userExists(email);
         return ResponseEntity.ok(exist);
 
+    }
+
+    public ResponseEntity<?> fallbackDeleteUser(@PathVariable String email, Exception e) {
+        return failConnectionHandler(e, "Task service not available, try again later.");
+    }
+
+    private static ResponseEntity<String> failConnectionHandler(Exception e, String message) {
+        if (e instanceof FeignException.ServiceUnavailable || e instanceof ConnectException) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(message);
+        }
+
+        throw new RuntimeException(e);
     }
 
 
