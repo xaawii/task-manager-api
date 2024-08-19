@@ -1,4 +1,4 @@
-package com.xmartin.notification_service.infraestructure.config;
+package com.xmartin.authservice.infraestructure.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @Builder
 public class KafkaPropertiesConfig {
 
-    private String createTask;
-    private String deleteTask;
-    private String updateTask;
     private String passwordToken;
     private String resetPassword;
 

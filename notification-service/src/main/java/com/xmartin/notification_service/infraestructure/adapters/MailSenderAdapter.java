@@ -1,8 +1,6 @@
 package com.xmartin.notification_service.infraestructure.adapters;
 
-import com.xmartin.notification_service.domain.model.CreateTaskEvent;
-import com.xmartin.notification_service.domain.model.DeleteTaskEvent;
-import com.xmartin.notification_service.domain.model.UpdateTaskEvent;
+import com.xmartin.notification_service.domain.model.*;
 import com.xmartin.notification_service.domain.port.out.MailSenderPort;
 import com.xmartin.notification_service.infraestructure.exceptions.SendEmailException;
 import jakarta.mail.internet.MimeMessage;
@@ -77,6 +75,42 @@ public class MailSenderAdapter implements MailSenderPort {
 
         log.info("\n{}", message);
         sendEmail(event.user().email(), "Task Deleted Notification", message);
+    }
+
+    @Override
+    public void sendPasswordTokenNotification(PasswordTokenEvent event) throws SendEmailException {
+        String message = """
+                ===================================================
+                Recover Password Code
+                ----------------------------------------------------
+                Use the following code to reset your password:
+                     
+                %s
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.token());
+
+        log.info("\n{}", message);
+        sendEmail(event.email(), "Recover Password Code", message);
+    }
+
+    @Override
+    public void sendResetPasswordNotification(ResetPasswordEvent event) throws SendEmailException {
+        String message = """
+                ===================================================
+                Password changed
+                ----------------------------------------------------
+                Dear %s,
+                You have successfully changed your password.
+                                
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.user().name());
+
+        log.info("\n{}", message);
+        sendEmail(event.user().email(), "Password changed", message);
     }
 
     private void sendEmail(String recipient, String subject, String content) throws SendEmailException {

@@ -9,13 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUserByEmailUseCase, SaveUserUseCase, GetUserByIdUseCase {
+public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUserByEmailUseCase, SaveUserUseCase, GetUserByIdUseCase, UpdateUserUseCase {
 
     private final UserExistsUseCase userExistsUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
     private final GetUserByEmailUseCase getUserByEmailUseCase;
     private final SaveUserUseCase saveUserUseCase;
     private final GetUserByIdUseCase getUserByIdUseCase;
+    private final UpdateUserUseCase updateUserUseCase;
 
     @Override
     public boolean userExists(String email) {
@@ -26,7 +27,6 @@ public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUse
     public void deleteUser(String email) throws UserNotFoundException {
         deleteUserUseCase.deleteUser(email);
     }
-
 
 
     @Override
@@ -42,5 +42,10 @@ public class UserService implements UserExistsUseCase, DeleteUserUseCase, GetUse
     @Override
     public UserModel getUserById(Integer userId) throws UserNotFoundException {
         return getUserByIdUseCase.getUserById(userId);
+    }
+
+    @Override
+    public UserModel updateUser(UserModel userModel, Integer userId) throws UserNotFoundException {
+        return updateUserUseCase.updateUser(userModel, userId);
     }
 }

@@ -2,11 +2,59 @@ spring:
   application:
     name: auth-service
 
+  #### BBDD AND JPA CONFIG ###
+  datasource:
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:8007}/${DB_NAME:Token}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+    ### CONNECTION POOL####
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: ${DB_MIN_IDLE:5}
+      idle-timeout: ${DB_IDLE_TIMEOUT:30000}
+      max-lifetime: ${DB_MAX_LIFETIME:1800000}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:30000}
+      pool-name: ${DB_POOL_NAME:AuthDatabasePool}
+
+  ### JPA ###
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: ${DB_DIALECT:org.hibernate.dialect.MySQLDialect}
+
+  ### LIQUIBASE ###
+  liquibase:
+    change-log: classpath:db/changelog.xml
+
+  ### KAFKA ###
+  kafka:
+    producer:
+      acks: -1
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_HOST:localhost}:${KAFKA_BOOTSTRAP_PORT:29092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+### KAFKA TOPICS ###
+topics:
+  kafka:
+    password-token: "password-token"
+    reset-password: "reset-password"
+
 
 ### JWT ###
 jwt:
   secret: ${SECRET_KEY}
   expirationms: ${KEY_EXPIRATION_MS:3600000}
+
+### PASSWORD TOKEN ###
+password-token:
+  expiration-min: ${PASSWORD_TOKEN_EXPIRATION_MIN:10}
+
 
 
 ### PORT ###
