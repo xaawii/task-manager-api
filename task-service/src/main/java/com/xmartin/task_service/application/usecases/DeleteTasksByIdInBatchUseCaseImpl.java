@@ -11,6 +11,7 @@ import com.xmartin.task_service.domain.port.out.TaskRepositoryPort;
 import com.xmartin.task_service.domain.port.out.UserClientRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,6 +24,7 @@ public class DeleteTasksByIdInBatchUseCaseImpl implements DeleteTasksByIdInBatch
     private final UserClientRepositoryPort userClientRepositoryPort;
     private final EventPublisherPort eventPublisherPort;
 
+    @Transactional
     @Override
     public void deleteTaskByIdInBatch(List<Long> ids) throws TaskNotFoundException, UserNotFoundException {
 

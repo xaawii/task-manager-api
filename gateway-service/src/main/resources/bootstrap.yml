@@ -17,16 +17,29 @@ spring:
             - Path=/users/**,/user-service/**
           filters:
             - AuthFilter
+            - name: CircuitBreaker
+              args:
+                name: userCircuitBreaker
+                fallbackUri: forward:/user-fallback
         - id: auth-service
           uri: lb://auth-service
           predicates:
             - Path=/auth/**,/auth-service/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authCircuitBreaker
+                fallbackUri: forward:/auth-fallback
         - id: task-service
           uri: lb://task-service
           predicates:
             - Path=/task/**,/task-service/**
           filters:
             - AuthFilter
+            - name: CircuitBreaker
+              args:
+                name: taskCircuitBreaker
+                fallbackUri: forward:/task-fallback
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
@@ -75,5 +88,33 @@ springdoc:
     disable-swagger-default-url: true
 
 
-
-
+### CIRCUIT BREAKER ###
+resilience4j.circuitbreaker:
+  instances:
+    userCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+    authCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+    taskCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10

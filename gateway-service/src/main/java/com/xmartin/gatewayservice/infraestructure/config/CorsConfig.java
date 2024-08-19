@@ -1,4 +1,4 @@
-package com.xmartin.gatewayservice.config;
+package com.xmartin.gatewayservice.infraestructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
-package com.xmartin.gatewayservice.config;
+package com.xmartin.gatewayservice.infraestructure.config;
 
-import com.xmartin.gatewayservice.dto.RequestDto;
-import com.xmartin.gatewayservice.dto.TokenDto;
+import com.xmartin.gatewayservice.infraestructure.dto.RequestDto;
+import com.xmartin.gatewayservice.infraestructure.dto.TokenDto;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
