@@ -1,18 +1,20 @@
 # Task Manager Api
 
 ## Description
-This is a RESTful microservices API developed in Java using Spring Boot, applying Hexagonal Architecture, API Gateway, Apache Kafka, and Spring Security for authentication.
+This is a RESTful microservices API developed in Java using Spring Boot, applying Hexagonal Architecture, API Gateway, Apache Kafka, Spring Security for authentication and Java Mail Sender to send notifications to users email.
 
 This is a Task Manager microservices CRUD API that allows users to perform CRUD operations on both Users and Tasks.
 
 Users must be registered and logged in to obtain a valid token. They can create, update, and delete their tasks, as well as view their tasks individually by ID or see all their tasks.
+
+Users can recover their password through the password recovery system. They can enter their email address, and if an account with that email exists, they will receive an email with a security code valid for 10 minutes. By submitting the new password along with the valid code, the password will be updated.
 
 ## Services
 * **Eureka Service:** This service registers all the other services with a random port and uses a load balancer.
 
 * **Gateway Service:** This service filters all requests and checks with the Auth Service to determine if the path requires authentication.
 
-* **Auth Service:** This service uses Spring Security to create and authenticate users, as well as to generate and validate tokens. It also communicates with the User Service through FeignClient to save users or check their data.
+* **Auth Service:** This service uses Spring Security to manage user creation and authentication, as well as to generate and validate tokens and security codes for password recovery. It also communicates with the User Service through FeignClient to save users or check their data.
 
 * **User Service:** This service provides CRUD operations for users and uses its own MySQL database.
 
@@ -26,6 +28,7 @@ Below is the docker-compose.yaml file that facilitates running this API on Docke
 
 **IMPORTANT:** Replace `SECRET_KEY` with your own Base64-encoded secret key and use a Gmail account with a generated app password and replace `MAIL_USERNAME` and `MAIL_PASSWORD` for being able to send notifications to users email.
 ```yaml
+
 services:
 
   eureka-service:
@@ -65,6 +68,12 @@ services:
       DB_NAME: Auth
       DB_HOST: mysql-auth
       DB_PORT: 3306
+      DB_POOL_SIZE: 10
+      DB_MIN_IDLE: 5
+      DB_IDLE_TIMEOUT: 30000
+      DB_MAX_LIFETIME: 1800000
+      DB_CONNECTION_TIMEOUT: 30000
+      DB_POOL_NAME: AuthDatabasePool
       GATEWAY_HOST: gateway-service
       GATEWAY_PORT: 8080
       EUREKA_HOST: eureka-service
@@ -76,23 +85,53 @@ services:
     depends_on:
       - mysql-auth
       - eureka-service
+
+  mysql-token:
+    container_name: mysql-token
+    image: mysql:latest
+    ports:
+      - "8007:3306"
+    environment:
+      MYSQL_USER: xavi
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Token
+    volumes:
+      - token-data-mysql:/var/lib/mysql
+    restart: always
+    networks:
+      - task-api-net
   
   auth-service:
     container_name: auth-service
     image: xaawii/task-api-auth:latest
     environment:
+      DB_USER: xavi
+      DB_PASSWORD: password
+      DB_NAME: Token
+      DB_HOST: mysql-token
+      DB_PORT: 3306
+      DB_POOL_SIZE: 10
+      DB_MIN_IDLE: 5
+      DB_IDLE_TIMEOUT: 30000
+      DB_MAX_LIFETIME: 1800000
+      DB_CONNECTION_TIMEOUT: 30000
+      DB_POOL_NAME: TokenDatabasePool
       GATEWAY_HOST: gateway-service
       GATEWAY_PORT: 8080
       EUREKA_HOST: eureka-service
       EUREKA_PORT: 8761
-      SECRET_KEY: *your own Base64 key*
-      KEY_EXPIRATION_MS: 3600000
+      KAFKA_BOOTSTRAP_HOST: kafka
+      KAFKA_BOOTSTRAP_PORT: 29092
+      SECRET_KEY: **put here your own base-64 secret key**
+      KEY_EXPIRATION_MS: 604800000
       PORT: 0
     restart: always
     networks:
       - task-api-net
     depends_on:
       - mysql-auth
+      - mysql-token
       - eureka-service
       - user-service
 
@@ -165,6 +204,12 @@ services:
       DB_NAME: Task
       DB_HOST: mysql-task
       DB_PORT: 3306
+      DB_POOL_SIZE: 10
+      DB_MIN_IDLE: 5
+      DB_IDLE_TIMEOUT: 30000
+      DB_MAX_LIFETIME: 1800000
+      DB_CONNECTION_TIMEOUT: 30000
+      DB_POOL_NAME: TaskDatabasePool
       GATEWAY_HOST: gateway-service
       GATEWAY_PORT: 8080
       EUREKA_HOST: eureka-service
@@ -185,8 +230,8 @@ services:
     container_name: notification-service
     image: xaawii/task-api-notification:latest
     environment:
-      MAIL_USERNAME: example@gmail.com
-      MAIL_PASSWORD: app-password
+      MAIL_USERNAME: **put your service gmail here**
+      MAIL_PASSWORD: **put your app password for gmail account**
       EUREKA_HOST: eureka-service
       EUREKA_PORT: 8761
       KAFKA_BOOTSTRAP_HOST: kafka
@@ -225,6 +270,8 @@ volumes:
     name: auth-data-mysql
   task-data-mysql:
     name: task-data-mysql
+  token-data-mysql:
+    name: token-data-mysql
 
 networks:
   task-api-net:
