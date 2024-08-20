@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +45,33 @@ public class KafkaConfig {
     public NewTopic updateTask(final KafkaPropertiesConfig kafkaProperties) {
         return TopicBuilder
                 .name(kafkaProperties.getUpdateTask())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic passwordToken(final KafkaPropertiesConfig kafkaProperties) {
+        return TopicBuilder
+                .name(kafkaProperties.getPasswordToken())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic resetPassword(final KafkaPropertiesConfig kafkaProperties) {
+        return TopicBuilder
+                .name(kafkaProperties.getResetPassword())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic registerUser(final KafkaPropertiesConfig kafkaProperties) {
+        return TopicBuilder
+                .name(kafkaProperties.getRegisterUser())
                 .partitions(1)
                 .replicas(1)
                 .build();

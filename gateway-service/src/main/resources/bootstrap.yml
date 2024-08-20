@@ -24,7 +24,7 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/auth/**,/auth-service/**
+            - Path=/auth/**,/auth-service/**,/password-token/**
           filters:
             - name: CircuitBreaker
               args:

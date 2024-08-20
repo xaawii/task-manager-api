@@ -1,9 +1,6 @@
 package com.xmartin.authservice.infraestructure.exceptions;
 
-import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
-import com.xmartin.authservice.domain.exceptions.InvalidTokenException;
-import com.xmartin.authservice.domain.exceptions.UserNotFoundException;
-import com.xmartin.authservice.domain.exceptions.WrongPasswordException;
+import com.xmartin.authservice.domain.exceptions.*;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.springframework.http.HttpStatus;
@@ -76,6 +73,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CallNotPermittedException.class)
     ResponseEntity<String> handleCallNotPermittedException(CallNotPermittedException e) {
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(TokenNotFoundException.class)
+    ResponseEntity<String> handleTokenNotFoundException(TokenNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
 }

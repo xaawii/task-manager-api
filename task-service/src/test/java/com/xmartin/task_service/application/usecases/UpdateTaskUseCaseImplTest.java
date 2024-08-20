@@ -91,7 +91,7 @@ class UpdateTaskUseCaseImplTest {
 
         //Given
         when(taskRepositoryPort.getTaskById(updatedTaskModel.getId())).thenReturn(oldBbddTaskModel);
-        when(taskRepositoryPort.saveTask(any(TaskModel.class))).thenReturn(savedTaskModel);
+        when(taskRepositoryPort.saveTask(updatedTaskModel)).thenReturn(savedTaskModel);
         when(userClientRepositoryPort.getUserById(savedTaskModel.getUserId())).thenReturn(userModel);
 
         //When

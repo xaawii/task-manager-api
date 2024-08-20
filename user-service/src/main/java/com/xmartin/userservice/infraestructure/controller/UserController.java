@@ -33,7 +33,7 @@ public class UserController {
     public final UserService userService;
 
 
-    @Operation(summary = "Save or update", description = "Save or update a user in the application")
+    @Operation(summary = "Save", description = "Save a user in the application")
     @ApiResponse(responseCode = "200", description = "Successfully saved user",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
@@ -45,12 +45,24 @@ public class UserController {
 
     }
 
+    @Operation(summary = "Update user", description = "Update user data")
+    @ApiResponse(responseCode = "200", description = "Successfully update user",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
+    @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserRequest userRequest, @PathVariable Integer userId) throws UserNotFoundException {
+
+        return ResponseEntity.ok(userMapper.toResponse(userService.updateUser(userMapper.toModel(userRequest), userId)));
+
+    }
+
     @CircuitBreaker(name = "taskCircuitBreaker", fallbackMethod = "fallbackDeleteUser")
     @Operation(summary = "Delete user by email", description = "Delete user by email")
     @ApiResponse(responseCode = "200", description = "Successfully deleted user",
             content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
-    @ApiResponse(responseCode = "400", description = "User Not Found", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @DeleteMapping("/email/{email}")
 
     public ResponseEntity<?> deleteUser(@PathVariable String email) throws UserNotFoundException {
@@ -64,7 +76,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
-    @ApiResponse(responseCode = "400", description = "User Not Found", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) throws UserNotFoundException {
 
@@ -76,7 +88,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @ApiResponse(responseCode = "401", description = "You are not authorized to access", content = @Content)
-    @ApiResponse(responseCode = "400", description = "User Not Found", content = @Content)
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = @Content)
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) throws UserNotFoundException {
 

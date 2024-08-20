@@ -12,4 +12,6 @@ public interface UserClientPort {
     Optional<UserModel> getUserByEmail(String email);
 
     boolean getUserExistsByEmail(String email);
+
+    UserModel updateUser(UserModel userModel, Integer userId);
 }

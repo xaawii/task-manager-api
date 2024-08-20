@@ -2,10 +2,7 @@ package com.xmartin.authservice.infraestructure.client;
 
 import com.xmartin.authservice.domain.model.UserModel;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -20,4 +17,7 @@ public interface UserClient {
 
     @PostMapping("/users/save")
     UserModel saveUser(@RequestBody UserModel userModel);
+
+    @PutMapping("users/{userId}")
+    UserModel updateUser(@RequestBody UserModel userModel, @PathVariable Integer userId);
 }

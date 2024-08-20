@@ -18,5 +18,8 @@ public class KafkaPropertiesConfig {
     private String createTask;
     private String deleteTask;
     private String updateTask;
+    private String passwordToken;
+    private String resetPassword;
+    private String registerUser;
 
 }
