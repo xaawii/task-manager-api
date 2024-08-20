@@ -46,4 +46,33 @@ class TaskConverterTest {
         assertEquals(1, taskModel.getUserId());
     }
 
+    @Test
+    void testToEntity() {
+
+        //Given
+        TaskModel taskModel = TaskModel.builder()
+                .id(1L)
+                .title("Test Task")
+                .description("Description")
+                .createDate(LocalDateTime.now().minusDays(1))
+                .updateDate(LocalDateTime.now())
+                .dueDate(LocalDateTime.now().plusDays(1))
+                .status(Status.PENDING)
+                .userId(1)
+                .build();
+
+        //When
+        TaskEntity taskEntity = taskConverter.toEntity(taskModel);
+
+        //Then
+        assertEquals(1L, taskEntity.getId());
+        assertEquals("Test Task", taskEntity.getTitle());
+        assertEquals("Description", taskEntity.getDescription());
+        assertEquals(taskModel.getCreateDate(), taskEntity.getCreateDate());
+        assertEquals(taskModel.getUpdateDate(), taskEntity.getUpdateDate());
+        assertEquals(taskModel.getDueDate(), taskEntity.getDueDate());
+        assertEquals(Status.PENDING, taskEntity.getStatus());
+        assertEquals(1, taskEntity.getUserId());
+    }
+
 }

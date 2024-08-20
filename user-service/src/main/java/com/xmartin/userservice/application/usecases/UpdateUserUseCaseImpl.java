@@ -15,10 +15,8 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
     @Override
     public UserModel updateUser(UserModel userModel, Integer userId) throws UserNotFoundException {
         UserModel userFromDb = userServicePort.getUserById(userId);
-        userFromDb.setEmail(userModel.getEmail());
         userFromDb.setName(userModel.getName());
         userFromDb.setPassword(userModel.getPassword());
-        userFromDb.setRole(userModel.getRole());
         return userServicePort.save(userFromDb);
     }
 }

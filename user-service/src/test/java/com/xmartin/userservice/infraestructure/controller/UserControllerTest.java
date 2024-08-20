@@ -108,6 +108,46 @@ class UserControllerTest {
     }
 
     @Test
+    void updateUser_success() throws Exception {
+        //Given
+        Integer userId = 1;
+        UserModel userModel = new UserModel();
+        UserModel savedUserModel = new UserModel();
+        when(userMapper.toModel(userRequest)).thenReturn(userModel);
+        when(userService.updateUser(userModel, userId)).thenReturn(savedUserModel);
+        when(userMapper.toResponse(savedUserModel)).thenReturn(userResponse);
+
+        //When - Then
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.email").value("xavi@test.com"))
+                .andExpect(jsonPath("$.role").value("ROLE_USER"));
+
+    }
+
+    @Test
+    void updateUser_UserNotFoundException() throws Exception {
+        //Given
+        Integer userId = 1;
+        UserModel userModel = new UserModel();
+        when(userMapper.toModel(userRequest)).thenReturn(userModel);
+        when(userService.updateUser(userModel, userId)).thenThrow(new UserNotFoundException(userModel.getEmail()));
+
+        //When - Then
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"));
+
+
+    }
+
+    @Test
     void deleteUser_success() throws Exception {
         //Given
         String email = "xavi@test.com";

@@ -19,13 +19,6 @@ public class PasswordTokenProvider {
     private static final int CODE_LENGTH = 6;
     private static final SecureRandom random = new SecureRandom();
 
-    public static String generateRecoveryCode() {
-        StringBuilder code = new StringBuilder(CODE_LENGTH);
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-        }
-        return code.toString();
-    }
 
     public PasswordTokenModel generatePasswordToken(String email) {
         return PasswordTokenModel.builder()
@@ -37,5 +30,13 @@ public class PasswordTokenProvider {
 
     public boolean isTokenExpired(LocalDateTime expiryDate) {
         return expiryDate.isBefore(LocalDateTime.now());
+    }
+
+    private static String generateRecoveryCode() {
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+        return code.toString();
     }
 }
