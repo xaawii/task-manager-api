@@ -48,6 +48,16 @@ public class PasswordTokenController {
         return ResponseEntity.ok().body("Password changed");
     }
 
+    @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackValidatePasswordToken")
+    @Operation(summary = "Validate password token", description = "Checks if a password token is expired")
+    @ApiResponse(responseCode = "200", description = "Validated",
+            content = {@Content(mediaType = "text/plain", schema = @Schema(type = "String"))})
+    @ApiResponse(responseCode = "404", description = "Token Not Found", content = @Content)
+    @PostMapping("/validate")
+    public ResponseEntity<?> validatePasswordToken(@RequestParam String token) throws TokenNotFoundException {
+        return ResponseEntity.ok().body(service.validatePasswordToken(token));
+    }
+
     public ResponseEntity<?> fallbackForgotPassword(@RequestParam String email, Exception e) {
         return failConnectionHandler(e);
     }
