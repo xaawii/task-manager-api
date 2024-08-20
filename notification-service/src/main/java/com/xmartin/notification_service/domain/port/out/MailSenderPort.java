@@ -15,4 +15,6 @@ public interface MailSenderPort {
 
     void sendResetPasswordNotification(ResetPasswordEvent event) throws SendEmailException;
 
+    void sendRegisterUserNotification(RegisterUserEvent event) throws SendEmailException;
+
 }

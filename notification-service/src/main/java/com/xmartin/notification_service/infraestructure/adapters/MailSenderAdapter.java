@@ -99,7 +99,7 @@ public class MailSenderAdapter implements MailSenderPort {
     public void sendResetPasswordNotification(ResetPasswordEvent event) throws SendEmailException {
         String message = """
                 ===================================================
-                Password changed
+                Password Changed
                 ----------------------------------------------------
                 Dear %s,
                 You have successfully changed your password.
@@ -110,7 +110,25 @@ public class MailSenderAdapter implements MailSenderPort {
                 """.formatted(event.user().name());
 
         log.info("\n{}", message);
-        sendEmail(event.user().email(), "Password changed", message);
+        sendEmail(event.user().email(), "Password Changed", message);
+    }
+
+    @Override
+    public void sendRegisterUserNotification(RegisterUserEvent event) throws SendEmailException {
+        String message = """
+                ===================================================
+                Welcome to Task Manager Api
+                ----------------------------------------------------
+                Dear %s,
+                Your registration has been completed.
+                                
+                                
+                Task Manager Api
+                ===================================================
+                """.formatted(event.user().name());
+
+        log.info("\n{}", message);
+        sendEmail(event.user().email(), "Registration Completed", message);
     }
 
     private void sendEmail(String recipient, String subject, String content) throws SendEmailException {

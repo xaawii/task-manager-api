@@ -2,11 +2,14 @@ package com.xmartin.authservice.application.usecases;
 
 import com.xmartin.authservice.domain.exceptions.EmailAlreadyInUseException;
 import com.xmartin.authservice.domain.model.RegisterModel;
+import com.xmartin.authservice.domain.model.RegisterUserEvent;
 import com.xmartin.authservice.domain.model.UserModel;
+import com.xmartin.authservice.domain.ports.out.EventPublisherPort;
 import com.xmartin.authservice.domain.ports.out.UserClientPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +30,9 @@ class RegisterUseCaseImplTest {
 
     @Mock
     private UserClientPort userClientPort;
+
+    @Mock
+    private EventPublisherPort eventPublisherPort;
 
     private UserModel userModel;
 
@@ -55,8 +61,21 @@ class RegisterUseCaseImplTest {
         UserModel savedUser = registerUseCase.register(registerModel);
 
         //Then
+        ArgumentCaptor<UserModel> userCaptor = ArgumentCaptor.forClass(UserModel.class);
+        verify(userClientPort).save(userCaptor.capture());
+        UserModel userModelCaptured = userCaptor.getValue();
+
+        ArgumentCaptor<RegisterUserEvent> eventCaptor = ArgumentCaptor.forClass(RegisterUserEvent.class);
+        verify(eventPublisherPort).publish(eventCaptor.capture());
+        RegisterUserEvent registerUserEvent = eventCaptor.getValue();
+
+        assertEquals(userModelCaptured.getEmail(), registerUserEvent.user().getEmail());
+        assertEquals("encodedPassword", userModelCaptured.getPassword());
+        assertEquals(registerModel.getName(), userModelCaptured.getName());
+
         assertNotNull(savedUser);
         assertEquals(registerModel.getEmail(), savedUser.getEmail());
-        verify(userClientPort, times(1)).save(any(UserModel.class));
+
+
     }
 }

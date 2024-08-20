@@ -16,7 +16,7 @@ spring:
       idle-timeout: ${DB_IDLE_TIMEOUT:30000}
       max-lifetime: ${DB_MAX_LIFETIME:1800000}
       connection-timeout: ${DB_CONNECTION_TIMEOUT:30000}
-      pool-name: ${DB_POOL_NAME:AuthDatabasePool}
+      pool-name: ${DB_POOL_NAME:TokenDatabasePool}
 
   ### JPA ###
   jpa:
@@ -44,6 +44,7 @@ topics:
   kafka:
     password-token: "password-token"
     reset-password: "reset-password"
+    register-user: "register-user"
 
 
 ### JWT ###

@@ -22,19 +22,4 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2" author="xavi">
-        <createTable tableName="client">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="client_id" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="client_secret" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="role" type="varchar(255)"/>
-        </createTable>
-    </changeSet>
-
 </databaseChangeLog>

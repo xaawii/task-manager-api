@@ -1,6 +1,7 @@
 package com.xmartin.authservice.infraestructure.adapters;
 
 import com.xmartin.authservice.domain.model.PasswordTokenEvent;
+import com.xmartin.authservice.domain.model.RegisterUserEvent;
 import com.xmartin.authservice.domain.model.ResetPasswordEvent;
 import com.xmartin.authservice.domain.ports.out.EventPublisherPort;
 import com.xmartin.authservice.infraestructure.config.KafkaPropertiesConfig;
@@ -24,5 +25,10 @@ public class EventPublisherAdapter implements EventPublisherPort {
     @Override
     public void publish(ResetPasswordEvent resetPasswordEvent) {
         kafkaTemplate.send(kafkaProperties.getResetPassword(), resetPasswordEvent);
+    }
+
+    @Override
+    public void publish(RegisterUserEvent registerUserEvent) {
+        kafkaTemplate.send(kafkaProperties.getRegisterUser(), registerUserEvent);
     }
 }

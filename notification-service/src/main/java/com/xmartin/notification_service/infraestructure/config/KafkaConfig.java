@@ -68,5 +68,14 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic registerUser(final KafkaPropertiesConfig kafkaProperties) {
+        return TopicBuilder
+                .name(kafkaProperties.getRegisterUser())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
 
 }

@@ -35,6 +35,7 @@ topics:
     delete-task: "delete-task"
     password-token: "password-token"
     reset-password: "reset-password"
+    register-user: "register-user"
 
 
 
