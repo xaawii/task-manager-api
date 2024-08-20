@@ -30,9 +30,12 @@ public class RegisterUseCaseImpl implements RegisterUseCase {
                 .role("ROLE_USER")
                 .build();
 
+
+        UserModel savedUser = userClientPort.save(userModel);
+
         RegisterUserEvent registerUserEvent = new RegisterUserEvent(userModel);
         eventPublisherPort.publish(registerUserEvent);
 
-        return userClientPort.save(userModel);
+        return savedUser;
     }
 }
