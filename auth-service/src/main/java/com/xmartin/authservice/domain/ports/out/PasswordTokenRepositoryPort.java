@@ -11,4 +11,6 @@ public interface PasswordTokenRepositoryPort {
 
     void remove(String token);
 
+    void tokenCleanUp();
+
 }

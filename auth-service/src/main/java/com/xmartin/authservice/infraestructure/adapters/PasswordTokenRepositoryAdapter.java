@@ -6,7 +6,11 @@ import com.xmartin.authservice.domain.ports.out.PasswordTokenRepositoryPort;
 import com.xmartin.authservice.infraestructure.converters.PasswordTokenConverter;
 import com.xmartin.authservice.infraestructure.repository.JpaPasswordTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +31,12 @@ public class PasswordTokenRepositoryAdapter implements PasswordTokenRepositoryPo
     @Override
     public void remove(String token) {
         repository.findByToken(token).ifPresent(repository::delete);
+    }
+
+    @Override
+    @Transactional
+    @Scheduled(fixedRate = 300000)
+    public void tokenCleanUp() {
+        repository.deleteByExpiryDateBefore(LocalDateTime.now());
     }
 }
