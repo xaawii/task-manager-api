@@ -24,15 +24,14 @@ public class MailSenderAdapter implements MailSenderPort {
     public void sendCreateNotification(CreateTaskEvent event) throws SendEmailException {
 
         String message = """
-                ===================================================
-                Task Created Notification
-                ----------------------------------------------------
+                                
                 Dear %s,
+                                
                 You have successfully created a task with the title: %s, with a due date for %s.
                                 
-                                
+                Att,
                 Task Manager Api
-                ===================================================
+                                
                 """.formatted(event.user().name(), event.title(), event.dueDate());
 
         log.info("\n{}", message);
@@ -43,16 +42,16 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendUpdateNotification(UpdateTaskEvent event) throws SendEmailException {
         String message = """
-                ===================================================
-                Task Updated Notification
-                ----------------------------------------------------
+                                
                 Dear %s,
+                                
                 You have successfully updated a task with the title: %s, with a due date for %s.
                                 
                 Current task status: %s
                                 
+                Att,
                 Task Manager Api
-                ===================================================
+                               
                 """.formatted(event.user().name(), event.title(), event.dueDate(), event.status().getText());
 
         log.info("\n{}", message);
@@ -62,15 +61,14 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendDeleteNotification(DeleteTaskEvent event) throws SendEmailException {
         String message = """
-                ===================================================
-                Task Deleted Notification
-                ----------------------------------------------------
+                                
                 Dear %s,
+                                
                 You have successfully deleted a task with the title: %s.
                                 
-                                
+                Att,
                 Task Manager Api
-                ===================================================
+                                
                 """.formatted(event.user().name(), event.title());
 
         log.info("\n{}", message);
@@ -80,15 +78,14 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendPasswordTokenNotification(PasswordTokenEvent event) throws SendEmailException {
         String message = """
-                ===================================================
-                Recover Password Code
-                ----------------------------------------------------
+                                
                 Use the following code to reset your password:
                      
                 %s
-                                
+                   
+                Att,
                 Task Manager Api
-                ===================================================
+                                
                 """.formatted(event.token());
 
         log.info("\n{}", message);
@@ -98,15 +95,14 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendResetPasswordNotification(ResetPasswordEvent event) throws SendEmailException {
         String message = """
-                ===================================================
-                Password Changed
-                ----------------------------------------------------
+                                
                 Dear %s,
+                                
                 You have successfully changed your password.
                                 
-                                
+                Att,
                 Task Manager Api
-                ===================================================
+                                
                 """.formatted(event.user().name());
 
         log.info("\n{}", message);
@@ -116,15 +112,14 @@ public class MailSenderAdapter implements MailSenderPort {
     @Override
     public void sendRegisterUserNotification(RegisterUserEvent event) throws SendEmailException {
         String message = """
-                ===================================================
-                Welcome to Task Manager Api
-                ----------------------------------------------------
+                                
                 Dear %s,
+                                
                 Your registration has been completed.
                                 
-                                
+                Att,
                 Task Manager Api
-                ===================================================
+                                
                 """.formatted(event.user().name());
 
         log.info("\n{}", message);
